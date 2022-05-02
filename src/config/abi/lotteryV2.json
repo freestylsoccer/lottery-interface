@@ -38,6 +38,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "claimer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DistributeRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "uint256",
         "name": "lotteryId",
@@ -201,6 +220,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReturnFunds",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "claimer",
@@ -268,20 +306,7 @@
   },
   {
     "inputs": [],
-    "name": "MAX_TREASURY_FEE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MIN_DISCOUNT_DIVISOR",
+    "name": "MAX_REFERRAL_FEE",
     "outputs": [
       {
         "internalType": "uint256",
@@ -309,6 +334,45 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "_winners",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lotteryId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "ticket",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "prize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "claimed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_lotteryId",
         "type": "uint256"
       },
@@ -316,6 +380,11 @@
         "internalType": "uint32[]",
         "name": "_ticketNumbers",
         "type": "uint32[]"
+      },
+      {
+        "internalType": "address",
+        "name": "_referral",
+        "type": "address"
       }
     ],
     "name": "buyTickets",
@@ -334,35 +403,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_discountDivisor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_priceTicket",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_numberTickets",
-        "type": "uint256"
-      }
-    ],
-    "name": "calculateTotalPriceForBulkTickets",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -387,13 +427,8 @@
       },
       {
         "internalType": "uint256[]",
-        "name": "_ticketIds",
+        "name": "_ticketNumbers",
         "type": "uint256[]"
-      },
-      {
-        "internalType": "uint32[]",
-        "name": "_brackets",
-        "type": "uint32[]"
       }
     ],
     "name": "claimTickets",
@@ -429,7 +464,33 @@
   },
   {
     "inputs": [],
+    "name": "currentRewardId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "currentTicketId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentWinnerId",
     "outputs": [
       {
         "internalType": "uint256",
@@ -446,14 +507,22 @@
         "internalType": "uint256",
         "name": "_lotteryId",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "_autoInjection",
-        "type": "bool"
       }
     ],
-    "name": "drawFinalNumberAndMakeLotteryClaimable",
+    "name": "distributeReferralRewards",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_lotteryId",
+        "type": "uint256"
+      }
+    ],
+    "name": "drawAndMakeLotteryClaimable",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -663,6 +732,30 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_lotteryId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "number",
+        "type": "uint256"
+      }
+    ],
+    "name": "shuffle",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_endTime",
         "type": "uint256"
       },
@@ -673,17 +766,22 @@
       },
       {
         "internalType": "uint256",
-        "name": "_discountDivisor",
+        "name": "_minTicketsToSell",
         "type": "uint256"
       },
       {
-        "internalType": "uint256[6]",
-        "name": "_rewardsBreakdown",
-        "type": "uint256[6]"
+        "internalType": "uint256",
+        "name": "_maxTicketsToSell",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_prizes",
+        "type": "uint256[]"
       },
       {
         "internalType": "uint256",
-        "name": "_treasuryFee",
+        "name": "_referralReward",
         "type": "uint256"
       }
     ],
@@ -765,31 +863,6 @@
           },
           {
             "internalType": "uint256",
-            "name": "discountDivisor",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[6]",
-            "name": "rewardsBreakdown",
-            "type": "uint256[6]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "treasuryFee",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[6]",
-            "name": "cakePerBracket",
-            "type": "uint256[6]"
-          },
-          {
-            "internalType": "uint256[6]",
-            "name": "countWinnersPerBracket",
-            "type": "uint256[6]"
-          },
-          {
-            "internalType": "uint256",
             "name": "firstTicketId",
             "type": "uint256"
           },
@@ -807,6 +880,31 @@
             "internalType": "uint32",
             "name": "finalNumber",
             "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ticketsSold",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minTicketsToSell",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxTicketsToSell",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "prizes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "referralReward",
+            "type": "uint256"
           }
         ],
         "internalType": "struct PancakeSwapLottery.Lottery",
@@ -850,16 +948,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_ticketId",
+        "name": "_ticketNumber",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint32",
-        "name": "_bracket",
-        "type": "uint32"
       }
     ],
-    "name": "viewRewardsForTicketId",
+    "name": "viewRewardsForTicketNumber",
     "outputs": [
       {
         "internalType": "uint256",
@@ -917,6 +1010,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_lotteryId",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawFunds",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

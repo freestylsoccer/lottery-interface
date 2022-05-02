@@ -216,8 +216,9 @@ const Hero = () => {
   const {
     currentRound: { amountCollectedInCake, status },
     isTransitioning,
+    currentLotteryId,
   } = useLottery()
-
+  console.log(currentLotteryId)
   const cakePriceBusd = usePriceCakeBusd()
   const prizeInBusd = amountCollectedInCake.times(cakePriceBusd)
   const prizeTotal = getBalanceNumber(prizeInBusd)

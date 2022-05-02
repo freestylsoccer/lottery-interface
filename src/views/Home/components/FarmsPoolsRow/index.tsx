@@ -4,7 +4,7 @@ import { Flex, Box, SwapVertIcon, IconButton } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { DeserializedPool } from 'state/types'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import useGetTopFarmsByApr from 'views/Home/hooks/useGetTopFarmsByApr'
+
 import useGetTopPoolsByApr from 'views/Home/hooks/useGetTopPoolsByApr'
 import { vaultPoolConfig } from 'config/constants/pools'
 import { useVaultApy } from 'hooks/useVaultApy'
@@ -29,12 +29,12 @@ const FarmsPoolsRow = () => {
   const [showFarms, setShowFarms] = useState(false)
   const { t } = useTranslation()
   const { observerRef, isIntersecting } = useIntersectionObserver()
-  const { topFarms } = useGetTopFarmsByApr(isIntersecting)
+
   const { topPools } = useGetTopPoolsByApr(isIntersecting)
   const { lockedApy } = useVaultApy()
 
   const timer = useRef<ReturnType<typeof setTimeout>>(null)
-  const isLoaded = topFarms[0] && topPools[0]
+  const isLoaded = topPools[0]
 
   const startTimer = useCallback(() => {
     timer.current = setInterval(() => {
@@ -82,18 +82,6 @@ const FarmsPoolsRow = () => {
           </IconButton>
         </Flex>
         <Box height={['240px', null, '80px']}>
-          <Grid>
-            {topFarms.map((topFarm, index) => (
-              <TopFarmPool
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                title={topFarm?.lpSymbol}
-                percentage={topFarm?.apr + topFarm?.lpRewardsApr}
-                index={index}
-                visible={showFarms}
-              />
-            ))}
-          </Grid>
           <Grid>
             {topPools.map((topPool, index) => (
               <TopFarmPool
