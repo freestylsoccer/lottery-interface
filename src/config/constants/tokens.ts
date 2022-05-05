@@ -2106,6 +2106,14 @@ export const testnetTokens = defineTokens({
     'Binance USD',
     'https://www.paxos.com/busd/',
   ),
+  tusd: new Token(
+    TESTNET,
+    '0xE35282d31014C1534EbB4689D7596AaF2CEB8f3D',
+    18,
+    'TUSD',
+    'True USD',
+    'https://trueusd.com/',
+  ),
   syrup: new Token(
     TESTNET,
     '0xfE1e507CeB712BDe086f3579d2c03248b2dB77f9',

@@ -7,7 +7,6 @@ import {
   Modal,
   Text,
   Flex,
-  HelpIcon,
   BalanceInput,
   Ticket,
   useTooltip,
@@ -28,15 +27,17 @@ import useTheme from 'hooks/useTheme'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { FetchStatus } from 'config/constants/types'
 import useApproveConfirmTransaction from 'hooks/useApproveConfirmTransaction'
-import { useCake, useLotteryV2Contract } from 'hooks/useContract'
+import { useTUSD, useLotteryV2Contract } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useToast from 'hooks/useToast'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import ApproveConfirmButtons, { ButtonArrangement } from 'components/ApproveConfirmButtons'
+import { isAddress, shortenAddress } from 'utils/format'
 import NumTicketsToBuyButton from './NumTicketsToBuyButton'
 import EditNumbersModal from './EditNumbersModal'
 import { useTicketsReducer } from './useTicketsReducer'
+import Textfield from '../../../../../packages/uikit/src/components/BalanceInput/TextField'
 
 const StyledModal = styled(Modal)`
   min-width: 280px;
@@ -81,10 +82,12 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
   const [maxPossibleTicketPurchase, setMaxPossibleTicketPurchase] = useState(BIG_ZERO)
   const [maxTicketPurchaseExceeded, setMaxTicketPurchaseExceeded] = useState(false)
   const [userNotEnoughCake, setUserNotEnoughCake] = useState(false)
+  const [referralAddress, setReferralAddress] = useState(account)
   const lotteryContract = useLotteryV2Contract()
-  const { reader: cakeContractReader, signer: cakeContractApprover } = useCake()
+  // const { reader: cakeContractReader, signer: cakeContractApprover } = useCake()
+  const { reader: tusdContractReader, signer: tusdContractApprover } = useTUSD(tokens.tusd.address)
   const { toastSuccess } = useToast()
-  const { balance: userCake, fetchStatus } = useTokenBalance(tokens.cake.address)
+  const { balance: userCake, fetchStatus } = useTokenBalance(tokens.tusd.address)
   // balance from useTokenBalance causes rerenders in effects as a new BigNumber is instantiated on each render, hence memoising it using the stringified value below.
   const stringifiedUserCake = userCake.toJSON()
   const memoisedUserCake = useMemo(() => new BigNumber(stringifiedUserCake), [stringifiedUserCake])
@@ -229,6 +232,9 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     setTicketsToBuy(inputAsInt ? limitedNumberTickets.toString() : '')
   }
 
+  const handleInputReferral = (input: string) => {
+    setReferralAddress(input)
+  }
   const handleNumberButtonClick = (number: number) => {
     setTicketsToBuy(number.toFixed())
     setUserNotEnoughCake(false)
@@ -243,10 +249,10 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
   const { isApproving, isApproved, isConfirmed, isConfirming, handleApprove, handleConfirm } =
     useApproveConfirmTransaction({
       onRequiresApproval: async () => {
-        return requiresApproval(cakeContractReader, account, lotteryContract.address)
+        return requiresApproval(tusdContractReader, account, lotteryContract.address)
       },
       onApprove: () => {
-        return callWithGasPrice(cakeContractApprover, 'approve', [lotteryContract.address, MaxUint256])
+        return callWithGasPrice(tusdContractApprover, 'approve', [lotteryContract.address, MaxUint256])
       },
       onApproveSuccess: async ({ receipt }) => {
         toastSuccess(
@@ -256,7 +262,11 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
       },
       onConfirm: () => {
         const ticketsForPurchase = getTicketsForPurchase()
-        return callWithGasPrice(lotteryContract, 'buyTickets', [currentLotteryId, ticketsForPurchase])
+        return callWithGasPrice(lotteryContract, 'buyTickets', [
+          currentLotteryId,
+          ticketsForPurchase,
+          lotteryContract.address,
+        ])
       },
       onSuccess: async ({ receipt }) => {
         onDismiss?.()
@@ -291,7 +301,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
   if (buyingStage === BuyingStage.EDIT) {
     return (
       <EditNumbersModal
-        totalCost={totalCost}
+        totalCost={getFullDisplayBalance(priceTicketInCake.times(ticketsToBuy || 0))}
         updateTicket={updateTicket}
         randomize={randomize}
         tickets={tickets}
@@ -335,7 +345,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
           {account && (
             <Flex justifyContent="flex-end">
               <Text fontSize="12px" color="textSubtle" mr="4px">
-                CAKE {t('Balance')}:
+                TUSD {t('Balance')}:
               </Text>
               {hasFetchedBalance ? (
                 <Text fontSize="12px" color="textSubtle">
@@ -376,9 +386,10 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         </ShortcutButtonsWrapper>
       )}
       <Flex flexDirection="column">
+        {/*
         <Flex mb="8px" justifyContent="space-between">
           <Text color="textSubtle" fontSize="14px">
-            {t('Cost')} (CAKE)
+            {t('Cost')} (TUSD)
           </Text>
           <Text color="textSubtle" fontSize="14px">
             {priceTicketInCake && getFullDisplayBalance(priceTicketInCake.times(ticketsToBuy || 0))} CAKE
@@ -400,14 +411,29 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
             ~{discountValue} CAKE
           </Text>
         </Flex>
+        */}
         <Flex borderTop={`1px solid ${theme.colors.cardBorder}`} pt="8px" mb="24px" justifyContent="space-between">
           <Text color="textSubtle" fontSize="16px">
             {t('You pay')}
           </Text>
           <Text fontSize="16px" bold>
-            ~{totalCost} CAKE
+            {priceTicketInCake && getFullDisplayBalance(priceTicketInCake.times(ticketsToBuy || 0))} TUSD
           </Text>
         </Flex>
+        <Flex pt="8px" mb="24px" justifyContent="space-between">
+          <Text color="textSubtle" fontSize="16px">
+            {t('Referral Address')}
+          </Text>
+          <Text fontSize="16px" bold>
+            {isAddress(referralAddress) ? shortenAddress(referralAddress) : 'Invalid Address'}
+          </Text>
+        </Flex>
+        <Textfield
+          isWarning={!isAddress(referralAddress)}
+          label="Referral Address"
+          onUserInput={handleInputReferral}
+          value={referralAddress}
+        />
 
         {account ? (
           <>
@@ -448,9 +474,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         )}
 
         <Text mt="24px" fontSize="12px" color="textSubtle">
-          {t(
-            '"Buy Instantly" chooses random numbers, with no duplicates among your tickets. Prices are set before each round starts, equal to $5 at that time. Purchases are final.',
-          )}
+          {t('"Buy Instantly" chooses random numbers, with no duplicates among your tickets. Purchases are final.')}
         </Text>
       </Flex>
     </StyledModal>

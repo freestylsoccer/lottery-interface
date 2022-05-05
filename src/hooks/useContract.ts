@@ -90,6 +90,17 @@ export const useCake = (): { reader: Cake; signer: Cake } => {
   )
 }
 
+export const useTUSD = (address): { reader: Erc20; signer: Erc20 } => {
+  const { account, library } = useActiveWeb3React()
+  return useMemo(
+    () => ({
+      reader: getBep20Contract(address),
+      signer: getBep20Contract(address, getProviderOrSigner(library, account)),
+    }),
+    [account, library, address],
+  )
+}
+
 export const useBunnyFactory = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getBunnyFactoryContract(library.getSigner()), [library])

@@ -16,23 +16,24 @@ const processViewLotterySuccessResponse = (response, lotteryId: string): Lottery
     startTime,
     endTime,
     priceTicketInCake,
-    discountDivisor,
-    treasuryFee,
     firstTicketId,
     lastTicketId,
     amountCollectedInCake,
     finalNumber,
-    cakePerBracket,
-    countWinnersPerBracket,
-    rewardsBreakdown,
+    ticketsSold,
+    prizes,
+    minTicketsToSell,
+    maxTicketsToSell,
+    referralReward,
   } = response
 
   const statusKey = Object.keys(LotteryStatus)[status]
-  const serializedCakePerBracket = cakePerBracket.map((cakeInBracket) => ethersToSerializedBigNumber(cakeInBracket))
-  const serializedCountWinnersPerBracket = countWinnersPerBracket.map((winnersInBracket) =>
-    ethersToSerializedBigNumber(winnersInBracket),
-  )
-  const serializedRewardsBreakdown = rewardsBreakdown.map((reward) => ethersToSerializedBigNumber(reward))
+  const serializedPrizes = prizes.map((prize) => ethersToSerializedBigNumber(prize))
+
+  let total: EthersBigNumber = EthersBigNumber.from(0)
+  for (let i = 0; i < prizes.length; i++) {
+    total = total.add(prizes[i])
+  }
 
   return {
     isLoading: false,
@@ -41,15 +42,16 @@ const processViewLotterySuccessResponse = (response, lotteryId: string): Lottery
     startTime: startTime?.toString(),
     endTime: endTime?.toString(),
     priceTicketInCake: ethersToSerializedBigNumber(priceTicketInCake),
-    discountDivisor: discountDivisor?.toString(),
-    treasuryFee: treasuryFee?.toString(),
     firstTicketId: firstTicketId?.toString(),
     lastTicketId: lastTicketId?.toString(),
     amountCollectedInCake: ethersToSerializedBigNumber(amountCollectedInCake),
     finalNumber,
-    cakePerBracket: serializedCakePerBracket,
-    countWinnersPerBracket: serializedCountWinnersPerBracket,
-    rewardsBreakdown: serializedRewardsBreakdown,
+    prizes: serializedPrizes,
+    ticketsSold: ethersToSerializedBigNumber(ticketsSold),
+    minTicketsToSell: ethersToSerializedBigNumber(minTicketsToSell),
+    maxTicketsToSell: ethersToSerializedBigNumber(maxTicketsToSell),
+    referralReward: ethersToSerializedBigNumber(referralReward),
+    totalInPrizes: ethersToSerializedBigNumber(total),
   }
 }
 
@@ -61,15 +63,16 @@ const processViewLotteryErrorResponse = (lotteryId: string): LotteryResponse => 
     startTime: '',
     endTime: '',
     priceTicketInCake: '',
-    discountDivisor: '',
-    treasuryFee: '',
     firstTicketId: '',
     lastTicketId: '',
     amountCollectedInCake: '',
     finalNumber: null,
-    cakePerBracket: [],
-    countWinnersPerBracket: [],
-    rewardsBreakdown: [],
+    ticketsSold: '',
+    prizes: [],
+    minTicketsToSell: '',
+    maxTicketsToSell: '',
+    referralReward: '',
+    totalInPrizes: null,
   }
 }
 

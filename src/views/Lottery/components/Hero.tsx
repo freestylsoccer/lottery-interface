@@ -1,8 +1,7 @@
 import styled, { keyframes } from 'styled-components'
-import { Box, Flex, Heading, Skeleton } from '@pancakeswap/uikit'
+import { Box, Flex, Heading } from '@pancakeswap/uikit'
 import { LotteryStatus } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
-import { usePriceCakeBusd } from 'state/farms/hooks'
 import { useLottery } from 'state/lottery/hooks'
 import { getBalanceNumber } from 'utils/formatBalance'
 import Balance from 'components/Balance'
@@ -214,25 +213,18 @@ const StarsDecorations = styled(Box)`
 const Hero = () => {
   const { t } = useTranslation()
   const {
-    currentRound: { amountCollectedInCake, status },
+    currentRound: { status, totalInPrizes },
     isTransitioning,
-    currentLotteryId,
   } = useLottery()
-  console.log(currentLotteryId)
-  const cakePriceBusd = usePriceCakeBusd()
-  const prizeInBusd = amountCollectedInCake.times(cakePriceBusd)
-  const prizeTotal = getBalanceNumber(prizeInBusd)
+  // 0xF770ad1d75d52f596d75afCE2cD48Fd75f9e736f --lottery remix
+  const prizeTotal = getBalanceNumber(totalInPrizes)
   const ticketBuyIsDisabled = status !== LotteryStatus.OPEN || isTransitioning
 
   const getHeroHeading = () => {
     if (status === LotteryStatus.OPEN) {
       return (
         <>
-          {prizeInBusd.isNaN() ? (
-            <Skeleton my="7px" height={60} width={190} />
-          ) : (
-            <PrizeTotalBalance fontSize="64px" bold prefix="$" value={prizeTotal} mb="8px" decimals={0} />
-          )}
+          <PrizeTotalBalance fontSize="64px" bold prefix="$" value={prizeTotal} mb="8px" decimals={0} />
           <Heading mb="32px" scale="lg" color="#ffffff">
             {t('in prizes!')}
           </Heading>
@@ -257,7 +249,7 @@ const Hero = () => {
         <img src="/images/lottery/ticket-r.png" width="121px" height="72px" alt="" />
       </StarsDecorations>
       <Heading mb="8px" scale="md" color="#ffffff" id="lottery-hero-title">
-        {t('The PancakeSwap Lottery')}
+        {t('The EME & ENE Lottery')}
       </Heading>
       {getHeroHeading()}
       <TicketContainer

@@ -561,10 +561,13 @@ interface LotteryRoundGenerics {
   status: LotteryStatus
   startTime: string
   endTime: string
-  treasuryFee: string
   firstTicketId: string
   lastTicketId: string
   finalNumber: number
+  ticketsSold: SerializedBigNumber
+  minTicketsToSell: SerializedBigNumber
+  maxTicketsToSell: SerializedBigNumber
+  referralReward: SerializedBigNumber
 }
 
 export interface LotteryRound extends LotteryRoundGenerics {
@@ -579,11 +582,9 @@ export interface LotteryRound extends LotteryRoundGenerics {
 
 export interface LotteryResponse extends LotteryRoundGenerics {
   priceTicketInCake: SerializedBigNumber
-  discountDivisor: SerializedBigNumber
   amountCollectedInCake: SerializedBigNumber
-  cakePerBracket: SerializedBigNumber[]
-  countWinnersPerBracket: SerializedBigNumber[]
-  rewardsBreakdown: SerializedBigNumber[]
+  prizes: BigNumber[]
+  totalInPrizes: SerializedBigNumber
 }
 
 export interface LotteryState {
