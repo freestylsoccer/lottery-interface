@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 import { Box, Flex, Heading } from '@pancakeswap/uikit'
+import BigNumber from 'bignumber.js'
 import { LotteryStatus } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
 import { useLottery } from 'state/lottery/hooks'
@@ -213,26 +214,27 @@ const StarsDecorations = styled(Box)`
 const Hero = () => {
   const { t } = useTranslation()
   const {
-    currentRound: { status, totalInPrizes },
+    currentRound: { status, totalInPrizes, ticketsSold, maxTicketsToSell },
     isTransitioning,
   } = useLottery()
   // 0xF770ad1d75d52f596d75afCE2cD48Fd75f9e736f --lottery remix
-  const prizeTotal = getBalanceNumber(totalInPrizes)
-  const ticketBuyIsDisabled = status !== LotteryStatus.OPEN || isTransitioning
+  const totalPrizesBN = new BigNumber(totalInPrizes)
+  const prizeTotal = getBalanceNumber(totalPrizesBN)
+  const ticketBuyIsDisabled = status !== LotteryStatus.OPEN || isTransitioning || +ticketsSold >= +maxTicketsToSell
 
   const getHeroHeading = () => {
     if (status === LotteryStatus.OPEN) {
       return (
         <>
           <PrizeTotalBalance fontSize="64px" bold prefix="$" value={prizeTotal} mb="8px" decimals={0} />
-          <Heading mb="32px" scale="lg" color="#ffffff">
+          <Heading mb="32px" scale="lg">
             {t('in prizes!')}
           </Heading>
         </>
       )
     }
     return (
-      <Heading mb="24px" scale="xl" color="#ffffff">
+      <Heading mb="24px" scale="xl">
         {t('Tickets on sale soon')}
       </Heading>
     )
@@ -248,7 +250,7 @@ const Hero = () => {
         <img src="/images/lottery/ticket-l.png" width="123px" height="83px" alt="" />
         <img src="/images/lottery/ticket-r.png" width="121px" height="72px" alt="" />
       </StarsDecorations>
-      <Heading mb="8px" scale="md" color="#ffffff" id="lottery-hero-title">
+      <Heading mb="8px" scale="md" id="lottery-hero-title">
         {t('The EME & ENE Lottery')}
       </Heading>
       {getHeroHeading()}

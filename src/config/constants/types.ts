@@ -154,6 +154,7 @@ export enum LotteryStatus {
   OPEN = 'open',
   CLOSE = 'close',
   CLAIMABLE = 'claimable',
+  UNREALIZED = 'unrealized',
 }
 
 export interface LotteryTicket {
@@ -163,6 +164,7 @@ export interface LotteryTicket {
   rewardBracket?: number
   roundId?: string
   cakeReward?: string
+  prize?: BigNumber
 }
 
 export interface LotteryTicketClaimData {

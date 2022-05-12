@@ -17,17 +17,13 @@ const Countdown: React.FC<CountdownProps> = ({ nextEventTime, preCountdownText, 
     <>
       {secondsRemaining ? (
         <Flex display="inline-flex" justifyContent="flex-end" alignItems="flex-end">
-          {preCountdownText && (
-            <Heading mr="12px" color="#ffff">
-              {preCountdownText}
-            </Heading>
-          )}
+          {preCountdownText && <Heading mr="12px">{preCountdownText}</Heading>}
           <Timer
             minutes={minutes + 1} // We don't show seconds - so values from 0 - 59s should be shown as 1 min
             hours={hours}
             days={days}
           />
-          {postCountdownText && <Heading color="#ffff">{postCountdownText}</Heading>}
+          {postCountdownText && <Heading>{postCountdownText}</Heading>}
         </Flex>
       ) : (
         <Skeleton height="41px" width="250px" />

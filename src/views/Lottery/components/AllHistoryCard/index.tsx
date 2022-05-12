@@ -4,7 +4,7 @@ import { Card, Text, Skeleton, CardHeader, Box } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useAppDispatch } from 'state'
 import { useLottery } from 'state/lottery/hooks'
-import { fetchLottery } from 'state/lottery/helpers'
+import { fetchLottery, fetchWinningTickets } from 'state/lottery/helpers'
 import { LotteryStatus } from 'config/constants/types'
 import RoundSwitcher from './RoundSwitcher'
 import { getDrawnDate, processLotteryResponse } from '../../helpers'
@@ -39,6 +39,7 @@ const AllHistoryCard = () => {
   const [latestRoundId, setLatestRoundId] = useState(null)
   const [selectedRoundId, setSelectedRoundId] = useState('')
   const [selectedLotteryNodeData, setSelectedLotteryNodeData] = useState(null)
+  const [winningTickets, setWinningTickets] = useState(null)
   const timer = useRef(null)
 
   const numRoundsFetched = lotteriesData?.length
@@ -58,6 +59,8 @@ const AllHistoryCard = () => {
 
     const fetchLotteryData = async () => {
       const lotteryData = await fetchLottery(selectedRoundId)
+      const winningTicketsPerRound = await fetchWinningTickets(selectedRoundId)
+      setWinningTickets(winningTicketsPerRound)
       const processedLotteryData = processLotteryResponse(lotteryData)
       setSelectedLotteryNodeData(processedLotteryData)
     }
@@ -120,7 +123,11 @@ const AllHistoryCard = () => {
           ) : null}
         </Box>
       </StyledCardHeader>
-      <PreviousRoundCardBody lotteryNodeData={selectedLotteryNodeData} lotteryId={selectedRoundId} />
+      <PreviousRoundCardBody
+        lotteryNodeData={selectedLotteryNodeData}
+        lotteryId={selectedRoundId}
+        winningTickets={winningTickets}
+      />
       <PreviousRoundCardFooter lotteryNodeData={selectedLotteryNodeData} lotteryId={selectedRoundId} />
     </StyledCard>
   )

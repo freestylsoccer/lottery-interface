@@ -5,7 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import { LotteryTicket, LotteryTicketClaimData } from 'config/constants/types'
 import { getBalanceAmount } from 'utils/formatBalance'
 import { callWithEstimateGas } from 'utils/calls'
-import { usePriceCakeBusd } from 'state/farms/hooks'
+// import { usePriceCakeBusd } from 'state/farms/hooks'
 import { useLottery } from 'state/lottery/hooks'
 import { fetchUserLotteries } from 'state/lottery'
 import { useGasPrice } from 'state/user/hooks'
@@ -38,9 +38,10 @@ const ClaimInnerContainer: React.FC<ClaimInnerProps> = ({ onSuccess, roundsToCla
   const lotteryContract = useLotteryV2Contract()
   const activeClaimData = roundsToClaim[activeClaimIndex]
 
-  const cakePriceBusd = usePriceCakeBusd()
+  // const cakePriceBusd = usePriceCakeBusd()
   const cakeReward = activeClaimData.cakeTotal
-  const dollarReward = cakeReward.times(cakePriceBusd)
+  // cakeReward.times(cakePriceBusd)
+  const dollarReward = cakeReward
   const rewardAsBalance = getBalanceAmount(cakeReward).toNumber()
   const dollarRewardAsBalance = getBalanceAmount(dollarReward).toNumber()
 
@@ -51,7 +52,10 @@ const ClaimInnerContainer: React.FC<ClaimInnerProps> = ({ onSuccess, roundsToCla
     const brackets = ticketsWithUnclaimedRewards.map((ticket) => {
       return ticket.rewardBracket
     })
-    return { lotteryId, ticketIds, brackets }
+    const ticketNumbers = ticketsWithUnclaimedRewards.map((ticket) => {
+      return ticket.number
+    })
+    return { lotteryId, ticketIds, ticketNumbers, brackets }
   }
 
   const claimTicketsCallData = parseUnclaimedTicketDataForClaimCall(
@@ -85,9 +89,9 @@ const ClaimInnerContainer: React.FC<ClaimInnerProps> = ({ onSuccess, roundsToCla
   }
 
   const handleClaim = async () => {
-    const { lotteryId, ticketIds, brackets } = claimTicketsCallData
+    const { lotteryId, ticketNumbers } = claimTicketsCallData
     const receipt = await fetchWithCatchTxError(() => {
-      return callWithEstimateGas(lotteryContract, 'claimTickets', [lotteryId, ticketIds, brackets], {
+      return callWithEstimateGas(lotteryContract, 'claimTickets', [lotteryId, ticketNumbers], {
         gasPrice,
       })
     })
@@ -95,7 +99,7 @@ const ClaimInnerContainer: React.FC<ClaimInnerProps> = ({ onSuccess, roundsToCla
       toastSuccess(
         t('Prizes Collected!'),
         <ToastDescriptionWithTx txHash={receipt.transactionHash}>
-          {t('Your CAKE prizes for round %lotteryId% have been sent to your wallet', { lotteryId })}
+          {t('Your TUSD prizes for round %lotteryId% have been sent to your wallet', { lotteryId })}
         </ToastDescriptionWithTx>,
       )
       handleProgressToNextClaim()
@@ -172,7 +176,7 @@ const ClaimInnerContainer: React.FC<ClaimInnerProps> = ({ onSuccess, roundsToCla
             fontSize="44px"
             bold
             color="secondary"
-            unit=" CAKE!"
+            unit=" TUSD!"
           />
           <PresentWonIcon ml={['0', null, '12px']} width="64px" />
         </Flex>

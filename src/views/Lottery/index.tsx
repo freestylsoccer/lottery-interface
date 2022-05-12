@@ -6,13 +6,6 @@ import PageSection from 'components/PageSection'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import { useFetchLottery, useLottery } from 'state/lottery/hooks'
-import {
-  TITLE_BG,
-  GET_TICKETS_BG,
-  FINISHED_ROUNDS_BG,
-  FINISHED_ROUNDS_BG_DARK,
-  CHECK_PRIZES_BG,
-} from './pageSectionStyles'
 import useGetNextLotteryEvent from './hooks/useGetNextLotteryEvent'
 import useStatusTransitions from './hooks/useStatusTransitions'
 import Hero from './components/Hero'
@@ -34,7 +27,7 @@ const Lottery = () => {
   useFetchLottery()
   useStatusTransitions()
   const { t } = useTranslation()
-  const { isDark, theme } = useTheme()
+  const { theme } = useTheme()
   const {
     currentRound: { status, endTime },
   } = useLottery()
@@ -47,12 +40,11 @@ const Lottery = () => {
     <>
       <PageMeta />
       <LotteryPage>
-        <PageSection background={TITLE_BG} index={1} hasCurvedDivider={false}>
+        <PageSection index={1} hasCurvedDivider={false}>
           <Hero />
         </PageSection>
         <PageSection
           containerProps={{ style: { marginTop: '-30px' } }}
-          background={GET_TICKETS_BG}
           concaveDivider
           clipFill={{ light: '#7645D9' }}
           dividerPosition="top"
@@ -60,7 +52,7 @@ const Lottery = () => {
         >
           <Flex alignItems="center" justifyContent="center" flexDirection="column" pt="24px">
             {status === LotteryStatus.OPEN && (
-              <Heading scale="xl" color="#ffffff" mb="24px" textAlign="center">
+              <Heading scale="xl" mb="24px" textAlign="center">
                 {t('Get your tickets now!')}
               </Heading>
             )}
@@ -78,15 +70,10 @@ const Lottery = () => {
             <NextDrawCard />
           </Flex>
         </PageSection>
-        <PageSection background={CHECK_PRIZES_BG} hasCurvedDivider={false} index={2}>
+        <PageSection hasCurvedDivider={false} index={2}>
           <CheckPrizesSection />
         </PageSection>
-        <PageSection
-          innerProps={{ style: { margin: '0', width: '100%' } }}
-          background={isDark ? FINISHED_ROUNDS_BG_DARK : FINISHED_ROUNDS_BG}
-          hasCurvedDivider={false}
-          index={2}
-        >
+        <PageSection innerProps={{ style: { margin: '0', width: '100%' } }} hasCurvedDivider={false} index={2}>
           <Flex width="100%" flexDirection="column" alignItems="center" justifyContent="center">
             <Heading mb="24px" scale="xl">
               {t('Finished Rounds')}

@@ -69,19 +69,20 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     currentLotteryId,
     currentRound: {
       priceTicketInCake,
-      discountDivisor,
+      // discountDivisor,
       userTickets: { tickets: userCurrentTickets },
     },
   } = useLottery()
   const { callWithGasPrice } = useCallWithGasPrice()
   const [ticketsToBuy, setTicketsToBuy] = useState('')
-  const [discountValue, setDiscountValue] = useState('')
-  const [totalCost, setTotalCost] = useState('')
-  const [ticketCostBeforeDiscount, setTicketCostBeforeDiscount] = useState('')
+  // const [discountValue, setDiscountValue] = useState('')
+  // const [totalCost, setTotalCost] = useState('')
+  // const [ticketCostBeforeDiscount, setTicketCostBeforeDiscount] = useState('')
   const [buyingStage, setBuyingStage] = useState<BuyingStage>(BuyingStage.BUY)
   const [maxPossibleTicketPurchase, setMaxPossibleTicketPurchase] = useState(BIG_ZERO)
   const [maxTicketPurchaseExceeded, setMaxTicketPurchaseExceeded] = useState(false)
   const [userNotEnoughCake, setUserNotEnoughCake] = useState(false)
+  const [editReferral, setEditReferral] = useState(false)
   const [referralAddress, setReferralAddress] = useState(account)
   const lotteryContract = useLotteryV2Contract()
   // const { reader: cakeContractReader, signer: cakeContractApprover } = useCake()
@@ -109,7 +110,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
       <Text>{t('100 tickets: 4.95%')}</Text>
     </>
   )
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(<TooltipComponent />, {
+  const { tooltip, tooltipVisible } = useTooltip(<TooltipComponent />, {
     placement: 'bottom-end',
     tooltipOffset: [20, 10],
   })
@@ -123,13 +124,13 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
 
   const getTicketCostAfterDiscount = useCallback(
     (numberTickets: BigNumber) => {
-      const totalAfterDiscount = priceTicketInCake
-        .times(numberTickets)
-        .times(discountDivisor.plus(1).minus(numberTickets))
-        .div(discountDivisor)
+      const totalAfterDiscount = priceTicketInCake.times(numberTickets)
+      // .times(discountDivisor.plus(1).minus(numberTickets))
+      // .div(discountDivisor)
       return totalAfterDiscount
     },
-    [discountDivisor, priceTicketInCake],
+    // [discountDivisor, priceTicketInCake],
+    [priceTicketInCake],
   )
 
   const getMaxTicketBuyWithDiscount = useCallback(
@@ -200,17 +201,17 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     getMaxTicketBuyWithDiscount,
     hasFetchedBalance,
   ])
-
+  /*
   useEffect(() => {
-    const numberOfTicketsToBuy = new BigNumber(ticketsToBuy)
-    const costAfterDiscount = getTicketCostAfterDiscount(numberOfTicketsToBuy)
-    const costBeforeDiscount = priceTicketInCake.times(numberOfTicketsToBuy)
-    const discountBeingApplied = costBeforeDiscount.minus(costAfterDiscount)
-    setTicketCostBeforeDiscount(costBeforeDiscount.gt(0) ? getFullDisplayBalance(costBeforeDiscount) : '0')
-    setTotalCost(costAfterDiscount.gt(0) ? getFullDisplayBalance(costAfterDiscount) : '0')
-    setDiscountValue(discountBeingApplied.gt(0) ? getFullDisplayBalance(discountBeingApplied, 18, 5) : '0')
-  }, [ticketsToBuy, priceTicketInCake, discountDivisor, getTicketCostAfterDiscount])
-
+    // const numberOfTicketsToBuy = new BigNumber(ticketsToBuy)
+    // const costAfterDiscount = getTicketCostAfterDiscount(numberOfTicketsToBuy)
+    // const costBeforeDiscount = priceTicketInCake.times(numberOfTicketsToBuy)
+    // const discountBeingApplied = costBeforeDiscount.minus(costAfterDiscount)
+    // setTicketCostBeforeDiscount(costBeforeDiscount.gt(0) ? getFullDisplayBalance(costBeforeDiscount) : '0')
+    // setTotalCost(costAfterDiscount.gt(0) ? getFullDisplayBalance(costAfterDiscount) : '0')
+    // setDiscountValue(discountBeingApplied.gt(0) ? getFullDisplayBalance(discountBeingApplied, 18, 5) : '0')
+  }, [ticketsToBuy, priceTicketInCake, getTicketCostAfterDiscount])
+  */
   const getNumTicketsByPercentage = (percentage: number): number => {
     const percentageOfMaxTickets = maxPossibleTicketPurchase.gt(0)
       ? maxPossibleTicketPurchase.div(new BigNumber(100)).times(new BigNumber(percentage))
@@ -265,7 +266,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         return callWithGasPrice(lotteryContract, 'buyTickets', [
           currentLotteryId,
           ticketsForPurchase,
-          lotteryContract.address,
+          isAddress(referralAddress) ? referralAddress : account,
         ])
       },
       onSuccess: async ({ receipt }) => {
@@ -282,6 +283,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     })
   }
 
+  /*
   const percentageDiscount = () => {
     const percentageAsBn = new BigNumber(discountValue).div(new BigNumber(ticketCostBeforeDiscount)).times(100)
     if (percentageAsBn.isNaN() || percentageAsBn.eq(0)) {
@@ -289,6 +291,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     }
     return percentageAsBn.toNumber().toFixed(2)
   }
+  */
 
   const disableBuying =
     !isApproved ||
@@ -422,18 +425,24 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         </Flex>
         <Flex pt="8px" mb="24px" justifyContent="space-between">
           <Text color="textSubtle" fontSize="16px">
-            {t('Referral Address')}
+            {t('Referral')}
           </Text>
           <Text fontSize="16px" bold>
             {isAddress(referralAddress) ? shortenAddress(referralAddress) : 'Invalid Address'}
           </Text>
+          <Button variant="secondary" scale="xs" onClick={() => setEditReferral(!editReferral)}>
+            {!editReferral ? t('Edit') : t('Done')}
+          </Button>
         </Flex>
-        <Textfield
-          isWarning={!isAddress(referralAddress)}
-          label="Referral Address"
-          onUserInput={handleInputReferral}
-          value={referralAddress}
-        />
+        {editReferral && (
+          <Textfield
+            isWarning={!isAddress(referralAddress)}
+            label="Referral Address"
+            onUserInput={handleInputReferral}
+            value={referralAddress}
+          />
+        )}
+        <Flex mb="12px" justifyContent="space-between" />
 
         {account ? (
           <>

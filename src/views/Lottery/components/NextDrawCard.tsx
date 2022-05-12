@@ -15,9 +15,10 @@ import {
   ExpandableLabel,
 } from '@pancakeswap/uikit'
 import { useWeb3React } from '@web3-react/core'
+import BigNumber from 'bignumber.js'
 import { LotteryStatus } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
-import { usePriceCakeBusd } from 'state/farms/hooks'
+// import { usePriceCakeBusd } from 'state/farms/hooks'
 import { useLottery } from 'state/lottery/hooks'
 import { getBalanceNumber } from 'utils/formatBalance'
 import Balance from 'components/Balance'
@@ -60,14 +61,15 @@ const NextDrawCard = () => {
   } = useTranslation()
   const { account } = useWeb3React()
   const { currentLotteryId, isTransitioning, currentRound } = useLottery()
-  const { endTime, amountCollectedInCake, userTickets, status } = currentRound
+  const { endTime, userTickets, status, totalInPrizes, ticketsSold, maxTicketsToSell } = currentRound
 
   const [onPresentViewTicketsModal] = useModal(<ViewTicketsModal roundId={currentLotteryId} roundStatus={status} />)
   const [isExpanded, setIsExpanded] = useState(false)
-  const ticketBuyIsDisabled = status !== LotteryStatus.OPEN || isTransitioning
+  const ticketBuyIsDisabled = status !== LotteryStatus.OPEN || isTransitioning || +ticketsSold >= +maxTicketsToSell
 
-  const cakePriceBusd = usePriceCakeBusd()
-  const prizeInBusd = amountCollectedInCake.times(cakePriceBusd)
+  // const cakePriceBusd = usePriceCakeBusd()
+  // const totalPrizesBN = new BigNumber(totalInPrizes)
+  const prizeInBusd = new BigNumber(totalInPrizes) // amountCollectedInCake.times(cakePriceBusd)
   const endTimeMs = parseInt(endTime, 10) * 1000
   const endDate = new Date(endTimeMs)
   const isLotteryOpen = status === LotteryStatus.OPEN
@@ -104,8 +106,8 @@ const NextDrawCard = () => {
             fontSize="14px"
             color="textSubtle"
             textAlign={['center', null, null, 'left']}
-            unit=" CAKE"
-            value={getBalanceNumber(amountCollectedInCake)}
+            unit=" TUSD"
+            value={getBalanceNumber(prizeInBusd)}
             decimals={0}
           />
         )}

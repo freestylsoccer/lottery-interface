@@ -43,58 +43,63 @@ const config = {
     return [
       {
         source: '/info/token/:address',
-        destination: '/info/tokens/:address',
+        destination: '/lottery',
       },
       {
         source: '/info/pool/:address',
-        destination: '/info/pools/:address',
+        destination: '/lottery',
       },
       {
         source: '/info/pair/:address',
-        destination: '/info/pools/:address',
+        destination: '/lottery',
       },
     ]
   },
   async redirects() {
     return [
       {
+        source: '/',
+        destination: '/lottery',
+        permanent: true,
+      },
+      {
         source: '/send',
-        destination: '/swap',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/swap/:outputCurrency',
-        destination: '/swap?outputCurrency=:outputCurrency',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/create/:currency*',
-        destination: '/add/:currency*',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/farms/archived',
-        destination: '/farms/history',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/pool',
-        destination: '/liquidity',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/staking',
-        destination: '/pools',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/syrup',
-        destination: '/pools',
+        destination: '/lottery',
         permanent: true,
       },
       {
         source: '/collectibles',
-        destination: '/nfts',
+        destination: '/lottery',
         permanent: true,
       },
     ]

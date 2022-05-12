@@ -15,10 +15,10 @@ import {
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { LotteryTicket, LotteryTicketClaimData } from 'config/constants/types'
-import { fetchLottery } from 'state/lottery/helpers'
+import { fetchLottery, fetchWinningTickets } from 'state/lottery/helpers'
 import { getWinningTickets } from 'state/lottery/fetchUnclaimedUserRewards'
 import { fetchUserTicketsForOneRound } from 'state/lottery/getUserTicketsData'
-import { LotteryRound } from 'state/types'
+// import { LotteryRound } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import orderBy from 'lodash/orderBy'
@@ -53,7 +53,7 @@ const TicketSkeleton = () => {
 }
 
 const PreviousRoundTicketsInner: React.FC<{ roundId: string }> = ({ roundId }) => {
-  const [lotteryInfo, setLotteryInfo] = useState<LotteryRound>(null)
+  // const [lotteryInfo, setLotteryInfo] = useState<LotteryRound>(null)
   const [allUserTickets, setAllUserTickets] = useState<LotteryTicket[]>(null)
   const [userWinningTickets, setUserWinningTickets] = useState<{
     allWinningTickets: LotteryTicket[]
@@ -61,6 +61,7 @@ const PreviousRoundTicketsInner: React.FC<{ roundId: string }> = ({ roundId }) =
     isFetched: boolean
     claimData: LotteryTicketClaimData
   }>({ allWinningTickets: null, ticketsWithUnclaimedRewards: null, isFetched: false, claimData: null })
+  const [winningTickets, setWinningTickets] = useState(null)
   const { t } = useTranslation()
   const { theme } = useTheme()
   const { account } = useWeb3React()
@@ -107,19 +108,25 @@ const PreviousRoundTicketsInner: React.FC<{ roundId: string }> = ({ roundId }) =
       const userTickets = await fetchUserTicketsForOneRound(account, roundId)
       const lotteryData = await fetchLottery(roundId)
       const processedLotteryData = processLotteryResponse(lotteryData)
-      const winningTickets = await getWinningTickets({
-        roundId,
-        userTickets,
-        finalNumber: processedLotteryData.finalNumber.toString(),
-      })
+      const userWinningTicketsData = await getWinningTickets(
+        {
+          roundId,
+          userTickets,
+          finalNumber: processedLotteryData.finalNumber.toString(),
+        },
+        account,
+      )
 
       setUserWinningTickets({
         isFetched: true,
-        allWinningTickets: winningTickets?.allWinningTickets,
-        ticketsWithUnclaimedRewards: winningTickets?.ticketsWithUnclaimedRewards,
-        claimData: winningTickets,
+        allWinningTickets: userWinningTicketsData?.allWinningTickets,
+        ticketsWithUnclaimedRewards: userWinningTicketsData?.ticketsWithUnclaimedRewards,
+        claimData: userWinningTicketsData,
       })
-      setLotteryInfo(processedLotteryData)
+      // setLotteryInfo(processedLotteryData)
+
+      const winningTicketsPerRound = await fetchWinningTickets(roundId)
+      setWinningTickets(winningTicketsPerRound)
 
       // If the user has some winning tickets - modify the userTickets response to include that data
       if (winningTickets?.allWinningTickets) {
@@ -163,10 +170,10 @@ const PreviousRoundTicketsInner: React.FC<{ roundId: string }> = ({ roundId }) =
       {tooltipVisible && tooltip}
       <TopBox>
         <Text bold textTransform="uppercase" color="secondary" fontSize="12px" mb="4px">
-          {t('Winning number')}
+          {winningTickets?.ticketNumber?.length > 0 ? t('Winning numbers') : t('Winning number')}
         </Text>
-        {lotteryInfo?.finalNumber ? (
-          <WinningNumbers number={lotteryInfo.finalNumber.toString()} />
+        {winningTickets ? (
+          winningTickets?.ticketNumber?.map((num) => <WinningNumbers key={num} number={num} mb="6px" />)
         ) : (
           <Skeleton width="230px" height="34px" />
         )}
@@ -210,6 +217,7 @@ const PreviousRoundTicketsInner: React.FC<{ roundId: string }> = ({ roundId }) =
                 number={ticket.number}
                 rewardBracket={ticket.rewardBracket}
                 status={ticket.status}
+                winningTickets={winningTickets}
               />
             )
           })

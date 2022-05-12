@@ -1,3 +1,4 @@
+import React from 'react'
 import styled from 'styled-components'
 import {
   CardBody,
@@ -12,7 +13,7 @@ import {
   useMatchBreakpoints,
   BunnyPlaceholderIcon,
 } from '@pancakeswap/uikit'
-import { LotteryRound } from 'state/types'
+import { LotteryRound, WinningTickets } from 'state/types'
 import { useGetUserLotteriesGraphData, useLottery } from 'state/lottery/hooks'
 import { LotteryStatus } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
@@ -47,10 +48,11 @@ const StyledCardRibbon = styled(CardRibbon)`
   }
 `
 
-const PreviousRoundCardBody: React.FC<{ lotteryNodeData: LotteryRound; lotteryId: string }> = ({
-  lotteryNodeData,
-  lotteryId,
-}) => {
+const PreviousRoundCardBody: React.FC<{
+  lotteryNodeData: LotteryRound
+  lotteryId: string
+  winningTickets: WinningTickets
+}> = ({ lotteryNodeData, lotteryId, winningTickets }) => {
   const { t } = useTranslation()
   const {
     currentLotteryId,
@@ -81,35 +83,39 @@ const PreviousRoundCardBody: React.FC<{ lotteryNodeData: LotteryRound; lotteryId
     <StyledCardBody>
       {isLatestRound && <StyledCardRibbon text={t('Latest')} />}
       <Grid>
-        <Flex justifyContent={['center', null, null, 'flex-start']}>
-          <Heading mb="24px">{t('Winning Number')}</Heading>
-        </Flex>
-        <Flex maxWidth={['240px', null, null, '100%']} justifyContent={['center', null, null, 'flex-start']}>
-          {lotteryId ? (
-            lotteryNodeData?.finalNumber ? (
-              <WinningNumbers
-                rotateText={isLargerScreen || false}
-                number={lotteryNodeData?.finalNumber.toString()}
-                mr={[null, null, null, '32px']}
-                size="100%"
-                fontSize={isLargerScreen ? '42px' : '16px'}
-              />
-            ) : (
-              <Skeleton
-                width={['240px', null, null, '450px']}
-                height={['34px', null, null, '71px']}
-                mr={[null, null, null, '32px']}
-              />
-            )
-          ) : (
-            <>
-              <Flex flexDirection="column" alignItems="center" width={['240px', null, null, '480px']}>
-                <Text mb="8px">{t('Please specify Round')}</Text>
-                <BunnyPlaceholderIcon height="64px" width="64px" />
-              </Flex>
-            </>
-          )}
-        </Flex>
+        {winningTickets?.ticketNumber?.map((num, i) => (
+          <React.Fragment key={num}>
+            <Flex justifyContent={['center', null, null, 'flex-start']}>
+              <Heading mb="24px">{t(`#${i + 1} Winning Number`)}</Heading>
+            </Flex>
+            <Flex maxWidth={['240px', null, null, '100%']} justifyContent={['center', null, null, 'flex-start']}>
+              {lotteryId ? (
+                lotteryNodeData?.finalNumber ? (
+                  <WinningNumbers
+                    rotateText={isLargerScreen || false}
+                    number={num}
+                    mr={[null, null, null, '32px']}
+                    size="100%"
+                    fontSize={isLargerScreen ? '42px' : '16px'}
+                  />
+                ) : (
+                  <Skeleton
+                    width={['240px', null, null, '450px']}
+                    height={['34px', null, null, '71px']}
+                    mr={[null, null, null, '32px']}
+                  />
+                )
+              ) : (
+                <>
+                  <Flex flexDirection="column" alignItems="center" width={['240px', null, null, '480px']}>
+                    <Text mb="8px">{t('Please specify Round')}</Text>
+                    <BunnyPlaceholderIcon height="64px" width="64px" />
+                  </Flex>
+                </>
+              )}
+            </Flex>
+          </React.Fragment>
+        ))}
         {userDataForRound && (
           <>
             <Box display={['none', null, null, 'flex']}>

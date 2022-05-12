@@ -528,6 +528,46 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getWinningTickets",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "lotteryId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ticket",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "prize",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "claimed",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PancakeSwapLottery.Winners[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -726,30 +766,6 @@
     "name": "setOperatorAndTreasuryAndInjectorAddresses",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_lotteryId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "number",
-        "type": "uint256"
-      }
-    ],
-    "name": "shuffle",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

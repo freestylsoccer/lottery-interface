@@ -1,9 +1,10 @@
 import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber'
+import BigNumber from 'bignumber.js'
 import { LotteryStatus, LotteryTicket } from 'config/constants/types'
 import lotteryV2Abi from 'config/abi/lotteryV2.json'
 import { getLotteryV2Address } from 'utils/addressHelpers'
 import { multicallv2 } from 'utils/multicall'
-import { LotteryResponse } from 'state/types'
+import { LotteryResponse, WinningTickets, WinnersResponse } from 'state/types'
 import { getLotteryV2Contract } from 'utils/contractHelpers'
 import { ethersToSerializedBigNumber } from 'utils/bigNumber'
 import { NUM_ROUNDS_TO_FETCH_FROM_NODES } from 'config/constants/lottery'
@@ -30,9 +31,9 @@ const processViewLotterySuccessResponse = (response, lotteryId: string): Lottery
   const statusKey = Object.keys(LotteryStatus)[status]
   const serializedPrizes = prizes.map((prize) => ethersToSerializedBigNumber(prize))
 
-  let total: EthersBigNumber = EthersBigNumber.from(0)
+  let total: BigNumber = new BigNumber(0)
   for (let i = 0; i < prizes.length; i++) {
-    total = total.add(prizes[i])
+    total = total.plus(new BigNumber(prizes[i].toString()))
   }
 
   return {
@@ -51,7 +52,7 @@ const processViewLotterySuccessResponse = (response, lotteryId: string): Lottery
     minTicketsToSell: ethersToSerializedBigNumber(minTicketsToSell),
     maxTicketsToSell: ethersToSerializedBigNumber(maxTicketsToSell),
     referralReward: ethersToSerializedBigNumber(referralReward),
-    totalInPrizes: ethersToSerializedBigNumber(total),
+    totalInPrizes: total.toString(),
   }
 }
 
@@ -82,6 +83,73 @@ export const fetchLottery = async (lotteryId: string): Promise<LotteryResponse> 
     return processViewLotterySuccessResponse(lotteryData, lotteryId)
   } catch (error) {
     return processViewLotteryErrorResponse(lotteryId)
+  }
+}
+
+const proccesWinningTicketsResponse = (response, lotteryId: string): WinningTickets => {
+  const some: string[] = response
+    .filter((res) => ethersToSerializedBigNumber(res?.lotteryId) === lotteryId)
+    .map((res) => {
+      return ethersToSerializedBigNumber(res?.ticket)
+    })
+
+  return {
+    lotteryId,
+    ticketNumber: some,
+  }
+}
+
+const processWinningTicketsErrorResponse = (): WinningTickets => {
+  return {
+    lotteryId: '',
+    ticketNumber: [],
+  }
+}
+
+export const fetchWinningTickets = async (lotteryId: string): Promise<WinningTickets> => {
+  try {
+    const winningTickets = await lotteryContract.getWinningTickets()
+    return proccesWinningTicketsResponse(winningTickets, lotteryId)
+  } catch (error) {
+    return processWinningTicketsErrorResponse()
+  }
+}
+
+const proccesWinnersResponse = (response, lotteryId: string): WinnersResponse => {
+  const { ticket, owner, claimed, prize } = response
+
+  return {
+    lotteryId,
+    ticketNumber: ticket?.toString(),
+    prize,
+    user: owner,
+    claimed,
+  }
+}
+
+const processWinnersErrorResponse = (): WinnersResponse => {
+  return {
+    lotteryId: '',
+    ticketNumber: '',
+    prize: undefined,
+    user: '',
+    claimed: undefined,
+  }
+}
+
+export const fetchWinners = async (lotteryId: string): Promise<WinnersResponse[]> => {
+  try {
+    const winners = await lotteryContract.getWinningTickets()
+
+    const response: WinnersResponse[] = []
+
+    winners
+      ?.filter((res) => ethersToSerializedBigNumber(res?.lotteryId) === lotteryId)
+      .map((res) => response.push(proccesWinnersResponse(res, lotteryId)))
+
+    return response
+  } catch (error) {
+    return [processWinnersErrorResponse()]
   }
 }
 

@@ -3,6 +3,7 @@ import { Flex, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import _uniqueId from 'lodash/uniqueId'
+import { WinningTickets } from 'state/types'
 import { parseRetrievedNumber } from '../helpers'
 
 const StyledNumberWrapper = styled(Flex)`
@@ -28,13 +29,16 @@ const RewardHighlighter = styled.div<{ numberMatches: number }>`
 interface TicketNumberProps extends LotteryTicket {
   localId?: number
   rewardBracket?: number
+  winningTickets?: WinningTickets
 }
 
-const TicketNumber: React.FC<TicketNumberProps> = ({ localId, id, number, rewardBracket }) => {
+const TicketNumber: React.FC<TicketNumberProps> = ({ localId, id, number, winningTickets }) => {
   const { t } = useTranslation()
   const reversedNumber = parseRetrievedNumber(number)
   const numberAsArray = reversedNumber.split('')
-  const numberMatches = rewardBracket + 1
+
+  const numberMatched = winningTickets?.ticketNumber?.indexOf(number)
+  const numberMatches = numberMatched >= 0 ? 6 : 0
 
   return (
     <Flex flexDirection="column" mb="12px">
@@ -42,14 +46,14 @@ const TicketNumber: React.FC<TicketNumberProps> = ({ localId, id, number, reward
         <Text fontSize="12px" color="textSubtle">
           #{localId || id}
         </Text>
-        {rewardBracket >= 0 && (
+        {numberMatched >= 0 && (
           <Text fontSize="12px">
-            {t('Matched first')} {numberMatches}
+            {t('Prize #')} {numberMatched + 1}
           </Text>
         )}
       </Flex>
       <StyledNumberWrapper>
-        {rewardBracket >= 0 && <RewardHighlighter numberMatches={numberMatches} />}
+        {numberMatched >= 0 && <RewardHighlighter numberMatches={numberMatches} />}
         {numberAsArray.map((digit) => (
           <Text key={`${localId || id}-${digit}-${_uniqueId()}`} fontSize="16px">
             {digit}

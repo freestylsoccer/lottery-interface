@@ -67,10 +67,8 @@ const CheckPrizesSection = () => {
         <Flex alignItems="center" justifyContent="center">
           <TicketImage src="/images/lottery/ticket-l.png" alt="lottery ticket" />
           <Flex mx={['4px', null, '16px']} flexDirection="column" alignItems="center">
-            <Heading textAlign="center" color="#F4EEFF">
-              {t('Connect your wallet')}
-            </Heading>
-            <Heading textAlign="center" color="#F4EEFF" mb="24px">
+            <Heading textAlign="center">{t('Connect your wallet')}</Heading>
+            <Heading textAlign="center" mb="24px">
               {t("to check if you've won!")}
             </Heading>
             <ConnectWalletButton width="190px" />
@@ -84,12 +82,8 @@ const CheckPrizesSection = () => {
         <Flex alignItems="center" justifyContent="center">
           <TornTicketImage src="/images/lottery/torn-ticket-l.png" alt="torn lottery ticket" />
           <Flex mx={['4px', null, '16px']} flexDirection="column">
-            <Heading textAlign="center" color="#F4EEFF">
-              {t('No prizes to collect')}...
-            </Heading>
-            <Heading textAlign="center" color="#F4EEFF">
-              {t('Better luck next time!')}
-            </Heading>
+            <Heading textAlign="center">{t('No prizes to collect')}...</Heading>
+            <Heading textAlign="center">{t('Better luck next time!')}</Heading>
           </Flex>
           <TornTicketImage src="/images/lottery/torn-ticket-r.png" alt="torn lottery ticket" />
         </Flex>
@@ -100,12 +94,8 @@ const CheckPrizesSection = () => {
         <Flex alignItems="center" justifyContent="center">
           <TicketImage src="/images/lottery/ticket-l.png" alt="lottery ticket" />
           <Flex mx={['4px', null, '16px']} flexDirection="column">
-            <Heading textAlign="center" color="#F4EEFF">
-              {t('Congratulations!')}
-            </Heading>
-            <Heading textAlign="center" color="#F4EEFF">
-              {t('Why not play again')}
-            </Heading>
+            <Heading textAlign="center">{t('Congratulations!')}</Heading>
+            <Heading textAlign="center">{t('Why not play again')}</Heading>
           </Flex>
           <TicketImage src="/images/lottery/ticket-r.png" alt="lottery ticket" />
         </Flex>
@@ -124,7 +114,7 @@ const CheckPrizesSection = () => {
       <Flex alignItems="center" justifyContent="center">
         <TicketImage src="/images/lottery/ticket-l.png" alt="lottery ticket" />
         <Flex mx={['4px', null, '16px']} flexDirection="column">
-          <Heading textAlign="center" color="#F4EEFF" mb="24px">
+          <Heading textAlign="center" mb="24px">
             {t('Are you a winner?')}
           </Heading>
           <Button

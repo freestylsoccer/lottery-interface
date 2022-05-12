@@ -1,21 +1,22 @@
 import BigNumber from 'bignumber.js'
-import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber'
+// import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber'
 import { LotteryStatus, LotteryTicket, LotteryTicketClaimData } from 'config/constants/types'
 import { LotteryUserGraphEntity, LotteryRoundGraphEntity } from 'state/types'
-import { multicallv2 } from 'utils/multicall'
-import lotteryV2Abi from 'config/abi/lotteryV2.json'
+// import { multicallv2 } from 'utils/multicall'
+// import { BIG_ZERO } from 'utils/bigNumber'
+// import lotteryV2Abi from 'config/abi/lotteryV2.json'
 import { NUM_ROUNDS_TO_CHECK_FOR_REWARDS } from 'config/constants/lottery'
-import { getLotteryV2Address } from 'utils/addressHelpers'
-import { BIG_ZERO } from 'utils/bigNumber'
+// import { getLotteryV2Address } from 'utils/addressHelpers'
 import { fetchUserTicketsForMultipleRounds } from './getUserTicketsData'
 import { MAX_LOTTERIES_REQUEST_SIZE } from './getLotteriesData'
+import { fetchWinners } from './helpers'
 
 interface RoundDataAndUserTickets {
   roundId: string
   userTickets: LotteryTicket[]
   finalNumber: string
 }
-
+/*
 const lotteryAddress = getLotteryV2Address()
 
 const fetchCakeRewardsForTickets = async (
@@ -46,7 +47,21 @@ const fetchCakeRewardsForTickets = async (
     return { ticketsWithUnclaimedRewards: null, cakeTotal: null }
   }
 }
+*/
 
+const getTicketsWithUnclaimedRewards = async (
+  winningTickets: LotteryTicket[],
+): Promise<{ ticketsWithUnclaimedRewards: LotteryTicket[]; cakeTotal: BigNumber }> => {
+  let prizeTotal: BigNumber = new BigNumber(0)
+  const ticketsWithUnclaimedRewards = winningTickets
+    .filter((winningTicket) => winningTicket?.status === false)
+    .map((winningTicket) => {
+      prizeTotal = prizeTotal.plus(new BigNumber(winningTicket?.prize?.toString()))
+      return { ...winningTicket, prize: winningTicket?.prize }
+    })
+  return { ticketsWithUnclaimedRewards, cakeTotal: prizeTotal }
+}
+/*
 const getRewardBracketByNumber = (ticketNumber: string, finalNumber: string): number => {
   // Winning numbers are evaluated right-to-left in the smart contract, so we reverse their order for validation here:
   // i.e. '1123456' should be evaluated as '6543211'
@@ -66,12 +81,27 @@ const getRewardBracketByNumber = (ticketNumber: string, finalNumber: string): nu
   const rewardBracket = matchingNumbers.length - 1
   return rewardBracket
 }
+*/
 
 export const getWinningTickets = async (
   roundDataAndUserTickets: RoundDataAndUserTickets,
+  account: string,
 ): Promise<LotteryTicketClaimData> => {
-  const { roundId, userTickets, finalNumber } = roundDataAndUserTickets
+  const { roundId } = roundDataAndUserTickets
+  const winnersData = await fetchWinners(roundId)
+  const filteredWinners = winnersData.filter((winner) => winner.user === account)
 
+  const allWinningTickets = filteredWinners.map((ticket) => {
+    return {
+      roundId,
+      id: undefined,
+      number: ticket?.ticketNumber,
+      status: ticket?.claimed,
+      rewardBracket: undefined,
+      prize: ticket?.prize,
+    }
+  })
+  /*
   const ticketsWithRewardBrackets = userTickets.map((ticket) => {
     return {
       roundId,
@@ -81,7 +111,7 @@ export const getWinningTickets = async (
       rewardBracket: getRewardBracketByNumber(ticket.number, finalNumber),
     }
   })
-
+  
   // A rewardBracket of -1 means no matches. 0 and above means there has been a match
   const allWinningTickets = ticketsWithRewardBrackets.filter((ticket) => {
     return ticket.rewardBracket >= 0
@@ -91,9 +121,14 @@ export const getWinningTickets = async (
   const unclaimedWinningTickets = allWinningTickets.filter((ticket) => {
     return !ticket.status
   })
+  */
+  // If ticket.status is true, the ticket has already been claimed
+  const unclaimedWinningTickets = allWinningTickets.filter((ticket) => {
+    return !ticket.status
+  })
 
   if (unclaimedWinningTickets.length > 0) {
-    const { ticketsWithUnclaimedRewards, cakeTotal } = await fetchCakeRewardsForTickets(unclaimedWinningTickets)
+    const { ticketsWithUnclaimedRewards, cakeTotal } = await getTicketsWithUnclaimedRewards(unclaimedWinningTickets)
     return { ticketsWithUnclaimedRewards, allWinningTickets, cakeTotal, roundId }
   }
 
@@ -157,7 +192,7 @@ const fetchUnclaimedUserRewards = async (
     })
 
     const winningTicketsForPastRounds = await Promise.all(
-      roundDataAndWinningTickets.map((roundData) => getWinningTickets(roundData)),
+      roundDataAndWinningTickets.map((roundData) => getWinningTickets(roundData, account)),
     )
 
     // Filter out null values (returned when no winning tickets found for past round)

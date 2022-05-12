@@ -91,8 +91,8 @@ export const getGraphLotteries = async (
 const getLotteriesData = async (currentLotteryId: string): Promise<LotteryRoundGraphEntity[]> => {
   const idsForNodesCall = getRoundIdsArray(currentLotteryId)
   const nodeData = await fetchMultipleLotteries(idsForNodesCall)
-  const graphResponse = await getGraphLotteries()
-  const mergedData = applyNodeDataToLotteriesGraphResponse(nodeData, graphResponse)
+  // const graphResponse = await getGraphLotteries()
+  const mergedData = applyNodeDataToLotteriesGraphResponse(nodeData, [])
   return mergedData
 }
 
