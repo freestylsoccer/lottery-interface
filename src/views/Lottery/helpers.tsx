@@ -40,13 +40,13 @@ export const processLotteryResponse = (
     priceTicketInCake: priceTicketInCakeAsString,
     // discountDivisor: discountDivisorAsString,
     amountCollectedInCake: amountCollectedInCakeAsString,
-    totalInPrizes: totalInPrizesAsString,
+    // totalInPrizes: totalInPrizesAsString,
   } = lotteryData
 
   // const discountDivisor = new BigNumber(discountDivisorAsString)
   const priceTicketInCake = new BigNumber(priceTicketInCakeAsString)
   const amountCollectedInCake = new BigNumber(amountCollectedInCakeAsString)
-  const totalInPrizes = new BigNumber(totalInPrizesAsString)
+  // const totalInPrizes = new BigNumber(totalInPrizesAsString)
 
   return {
     isLoading: lotteryData.isLoading,
@@ -69,7 +69,7 @@ export const processLotteryResponse = (
     minTicketsToSell: lotteryData.minTicketsToSell,
     maxTicketsToSell: lotteryData.maxTicketsToSell,
     referralReward: lotteryData.referralReward,
-    totalInPrizes,
+    // totalInPrizes,
     prizes: lotteryData.prizes,
   }
 }

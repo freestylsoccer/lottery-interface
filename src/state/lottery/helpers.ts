@@ -73,7 +73,7 @@ const processViewLotteryErrorResponse = (lotteryId: string): LotteryResponse => 
     minTicketsToSell: '',
     maxTicketsToSell: '',
     referralReward: '',
-    totalInPrizes: null,
+    totalInPrizes: '',
   }
 }
 

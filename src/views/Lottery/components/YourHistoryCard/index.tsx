@@ -104,7 +104,13 @@ const YourHistoryCard: React.FC<YourHistoryCardProps> = ({ handleShowMoreClick, 
 
   const getBody = () => {
     if (shouldShowRoundDetail) {
-      return <PreviousRoundCardBody lotteryNodeData={selectedLotteryNodeData} lotteryId={selectedLotteryId} />
+      return (
+        <PreviousRoundCardBody
+          lotteryNodeData={selectedLotteryNodeData}
+          lotteryId={selectedLotteryId}
+          winningTickets={undefined}
+        />
+      )
     }
 
     const claimableRounds = userLotteryData?.rounds.filter((round) => {

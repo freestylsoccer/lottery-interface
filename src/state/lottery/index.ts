@@ -37,7 +37,7 @@ const initialState: LotteryState = {
     maxTicketsToSell: '',
     referralReward: '',
     prizes: [],
-    totalInPrizes: '',
+    totalInPrizes: null,
     userTickets: {
       isLoading: true,
       tickets: [],

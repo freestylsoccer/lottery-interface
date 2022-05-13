@@ -44,13 +44,13 @@ const RewardBrackets: React.FC<RewardMatchesProps> = ({ lotteryNodeData, isHisto
     if (lotteryNodeData) {
       const { prizes } = lotteryNodeData
 
-      const prizesBN = state.prizes?.map((prize) => {
+      const prizesToBN = prizes?.map((prize) => {
         return new BigNumber(prize?.toString())
       })
       setState({
         isLoading: false,
         prizes,
-        prizesBN,
+        prizesBN: prizesToBN,
       })
     } else {
       setState({
@@ -59,7 +59,7 @@ const RewardBrackets: React.FC<RewardMatchesProps> = ({ lotteryNodeData, isHisto
         prizesBN: [],
       })
     }
-  }, [lotteryNodeData, state.prizes])
+  }, [lotteryNodeData])
 
   /*
   const getCakeRewards = (bracket: number) => {
@@ -80,9 +80,9 @@ const RewardBrackets: React.FC<RewardMatchesProps> = ({ lotteryNodeData, isHisto
         {!isHistoricRound && t('Current prizes up for grabs:')}
       </Text>
       <RewardsInner>
-        {prizesBN.map((prize, index, n) => (
+        {prizesBN.map((prize, index) => (
           <RewardBracketDetail
-            key={n}
+            key={+prize.toString()}
             rewardBracket={index}
             cakeAmount={!isLoading && prize}
             numberWinners={!isLoading && '1'}

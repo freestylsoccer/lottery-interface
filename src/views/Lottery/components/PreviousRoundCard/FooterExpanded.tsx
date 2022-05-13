@@ -40,10 +40,12 @@ const PreviousRoundCardFooter: React.FC<{ lotteryNodeData: LotteryRound; lottery
     }
   }, [lotteryGraphDataFromState, lotteryId])
 
-  let prizeInBusd = new BigNumber(NaN)
+  let prizeInBusd = new BigNumber(0)
   if (lotteryNodeData) {
-    const { totalInPrizes } = lotteryNodeData
-    prizeInBusd = totalInPrizes
+    const { prizes } = lotteryNodeData
+    for (let i = 0; i < prizes.length; i++) {
+      prizeInBusd = prizeInBusd.plus(new BigNumber(prizes[i].toString()))
+    }
   }
 
   const getTotalUsers = (): string => {
