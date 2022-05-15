@@ -37,9 +37,9 @@ const LotteryCardContent = () => {
   const { data: currentLotteryPrizeInCake = null } = useSWR(
     lotteryId ? ['lottery', 'currentLotteryPrize'] : null,
     async () => {
-      const { amountCollectedInCake } = await fetchLottery(lotteryId)
-      if (amountCollectedInCake) {
-        return parseFloat(amountCollectedInCake)
+      const { amountCollectedInBusd } = await fetchLottery(lotteryId)
+      if (amountCollectedInBusd) {
+        return parseFloat(amountCollectedInBusd)
       }
       throw new Error('Error fetching current lottery prize')
     },

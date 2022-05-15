@@ -4,7 +4,7 @@ import { LotteryStatus, LotteryTicket } from 'config/constants/types'
 import lotteryV2Abi from 'config/abi/lotteryV2.json'
 import { getLotteryV2Address } from 'utils/addressHelpers'
 import { multicallv2 } from 'utils/multicall'
-import { LotteryResponse, WinningTickets, WinnersResponse } from 'state/types'
+import { LotteryResponse, WinningTickets, WinnersResponse, HasAmountToWitdraw, HasReferralRewards } from 'state/types'
 import { getLotteryV2Contract } from 'utils/contractHelpers'
 import { ethersToSerializedBigNumber } from 'utils/bigNumber'
 import { NUM_ROUNDS_TO_FETCH_FROM_NODES } from 'config/constants/lottery'
@@ -16,10 +16,10 @@ const processViewLotterySuccessResponse = (response, lotteryId: string): Lottery
     status,
     startTime,
     endTime,
-    priceTicketInCake,
+    priceTicketInBusd,
     firstTicketId,
     lastTicketId,
-    amountCollectedInCake,
+    amountCollectedInBusd,
     finalNumber,
     ticketsSold,
     prizes,
@@ -42,10 +42,10 @@ const processViewLotterySuccessResponse = (response, lotteryId: string): Lottery
     status: LotteryStatus[statusKey],
     startTime: startTime?.toString(),
     endTime: endTime?.toString(),
-    priceTicketInCake: ethersToSerializedBigNumber(priceTicketInCake),
+    priceTicketInBusd: ethersToSerializedBigNumber(priceTicketInBusd),
     firstTicketId: firstTicketId?.toString(),
     lastTicketId: lastTicketId?.toString(),
-    amountCollectedInCake: ethersToSerializedBigNumber(amountCollectedInCake),
+    amountCollectedInBusd: ethersToSerializedBigNumber(amountCollectedInBusd),
     finalNumber,
     prizes: serializedPrizes,
     ticketsSold: ethersToSerializedBigNumber(ticketsSold),
@@ -63,10 +63,10 @@ const processViewLotteryErrorResponse = (lotteryId: string): LotteryResponse => 
     status: LotteryStatus.PENDING,
     startTime: '',
     endTime: '',
-    priceTicketInCake: '',
+    priceTicketInBusd: '',
     firstTicketId: '',
     lastTicketId: '',
-    amountCollectedInCake: '',
+    amountCollectedInBusd: '',
     finalNumber: null,
     ticketsSold: '',
     prizes: [],
@@ -83,6 +83,46 @@ export const fetchLottery = async (lotteryId: string): Promise<LotteryResponse> 
     return processViewLotterySuccessResponse(lotteryData, lotteryId)
   } catch (error) {
     return processViewLotteryErrorResponse(lotteryId)
+  }
+}
+
+const processHasAmountToWithdrawResponse = (response): HasAmountToWitdraw => {
+  return {
+    tickets: ethersToSerializedBigNumber(response?.[0]),
+    amount: ethersToSerializedBigNumber(response?.[1]),
+    hasWithdrawAmount: ethersToSerializedBigNumber(response?.[1]) !== '0',
+  }
+}
+
+export const fetchHasAmountToWithdraw = async (lotteryId: string, account: string): Promise<HasAmountToWitdraw> => {
+  try {
+    const rawData = await lotteryContract.hasAmountToWithdraw(lotteryId, account)
+    return processHasAmountToWithdrawResponse(rawData)
+  } catch (error) {
+    return {
+      tickets: '',
+      amount: '',
+      hasWithdrawAmount: false,
+    }
+  }
+}
+
+const processHasReferralRewardsResponse = (response): HasReferralRewards => {
+  return {
+    isLoading: false,
+    amount: ethersToSerializedBigNumber(response),
+  }
+}
+
+export const fetchHasReferralRewards = async (lotteryId: string, account: string): Promise<HasReferralRewards> => {
+  try {
+    const rawData = await lotteryContract.hasReferralRewardsToClaim(lotteryId, account)
+    return processHasReferralRewardsResponse(rawData)
+  } catch (error) {
+    return {
+      isLoading: false,
+      amount: '',
+    }
   }
 }
 

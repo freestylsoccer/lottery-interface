@@ -3,7 +3,7 @@ import { Flex, Skeleton, Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 // import { usePriceCakeBusd } from 'state/farms/hooks'
 import Balance from 'components/Balance'
-import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
+import { getBalanceNumber } from 'utils/formatBalance'
 
 interface RewardBracketDetailProps {
   cakeAmount: BigNumber
@@ -30,9 +30,6 @@ const RewardBracketDetail: React.FC<RewardBracketDetailProps> = ({
     if (isBurn) {
       return t('Burn')
     }
-    if (rewardBracket === 5) {
-      return t('Match all %numberMatch%', { numberMatch })
-    }
     return t('Prize #%numberMatch%', { numberMatch })
   }
 
@@ -49,7 +46,7 @@ const RewardBracketDetail: React.FC<RewardBracketDetailProps> = ({
         {isLoading || cakeAmount.isNaN() ? (
           <Skeleton my="4px" mr="10px" height={20} width={110} />
         ) : (
-          <Balance fontSize="20px" bold unit=" TUSD" value={getBalanceNumber(cakeAmount)} decimals={0} />
+          <Balance fontSize="20px" bold unit=" BUSD" value={getBalanceNumber(cakeAmount)} decimals={0} />
         )}
         {isLoading || cakeAmount.isNaN() ? (
           <>

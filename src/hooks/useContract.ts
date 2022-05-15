@@ -90,7 +90,7 @@ export const useCake = (): { reader: Cake; signer: Cake } => {
   )
 }
 
-export const useTUSD = (address): { reader: Erc20; signer: Erc20 } => {
+export const useBUSD = (address): { reader: Erc20; signer: Erc20 } => {
   const { account, library } = useActiveWeb3React()
   return useMemo(
     () => ({

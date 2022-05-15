@@ -2100,7 +2100,7 @@ export const testnetTokens = defineTokens({
   ),
   busd: new Token(
     TESTNET,
-    '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee',
+    '0x2774616c8B19C1D3E8802C6f802060f94494722f',
     18,
     'BUSD',
     'Binance USD',

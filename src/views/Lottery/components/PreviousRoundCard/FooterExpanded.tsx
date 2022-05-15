@@ -73,7 +73,7 @@ const PreviousRoundCardFooter: React.FC<{ lotteryNodeData: LotteryRound; lottery
         {prizeInBusd.isNaN() ? (
           <Skeleton my="2px" height={14} width={90} />
         ) : (
-          <Balance fontSize="14px" color="textSubtle" unit=" TUSD" value={getBalanceNumber(prizeInBusd)} decimals={0} />
+          <Balance fontSize="14px" color="textSubtle" unit=" BUSD" value={getBalanceNumber(prizeInBusd)} decimals={0} />
         )}
       </>
     )

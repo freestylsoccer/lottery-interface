@@ -64,7 +64,7 @@ const isLotteryLive = (status: LotteryStatus) => status === LotteryStatus.OPEN
 const LotteryPrice: React.FC = () => {
   const { data } = useSWR<LotteryResponse>(['currentLottery'])
   const cakePriceBusd = usePriceCakeBusd()
-  const prizeInBusd = new BigNumber(data.amountCollectedInCake).times(cakePriceBusd)
+  const prizeInBusd = new BigNumber(data.amountCollectedInBusd).times(cakePriceBusd)
   const prizeTotal = getBalanceNumber(prizeInBusd)
   const { t } = useTranslation()
 

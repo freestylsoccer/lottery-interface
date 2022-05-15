@@ -106,7 +106,7 @@ const NextDrawCard = () => {
             fontSize="14px"
             color="textSubtle"
             textAlign={['center', null, null, 'left']}
-            unit=" TUSD"
+            unit=" BUSD"
             value={getBalanceNumber(prizeInBusd)}
             decimals={0}
           />
