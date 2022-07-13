@@ -22,7 +22,7 @@ import { fetchUserTicketsForOneRound } from 'state/lottery/getUserTicketsData'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import orderBy from 'lodash/orderBy'
-import WinningNumbers from '../WinningNumbers'
+// import WinningNumbers from '../WinningNumbers'
 import { processLotteryResponse } from '../../helpers'
 import TicketNumber from '../TicketNumber'
 import ClaimPrizesModal from '../ClaimPrizesModal'
@@ -168,18 +168,18 @@ const PreviousRoundTicketsInner: React.FC<{ roundId: string }> = ({ roundId }) =
   return (
     <>
       {tooltipVisible && tooltip}
-      <TopBox>
+      {/*  <TopBox>
         <Text bold textTransform="uppercase" color="secondary" fontSize="12px" mb="4px">
           {winningTickets?.ticketNumber?.length > 0 ? t('Winning numbers') : t('Winning number')}
         </Text>
-        {winningTickets ? (
+        {winningTickets?.ticketNumber?.length < 10 ? (
           winningTickets?.ticketNumber?.map((num) => <WinningNumbers key={num} number={num} mb="6px" />)
         ) : (
           <Skeleton width="230px" height="34px" />
         )}
-      </TopBox>
+      </TopBox> */}
       <ScrollBox>
-        <Text bold textTransform="uppercase" color="secondary" fontSize="12px" my="16px">
+        <Text bold textTransform="uppercase" color="secondary" fontSize="12px">
           {t('Your tickets')}
         </Text>
         <Flex mb="8px" justifyContent="space-between">

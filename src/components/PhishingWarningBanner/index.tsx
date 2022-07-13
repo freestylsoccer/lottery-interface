@@ -43,8 +43,8 @@ const PhishingWarningBanner: React.FC = () => {
   const { t } = useTranslation()
   const [, hideBanner] = usePhishingBannerManager()
   const { isMobile, isMd } = useMatchBreakpoints()
-  const warningText = t("please make sure you're visiting https://pancakeswap.finance - check the URL carefully.")
-  const warningTextAsParts = warningText.split(/(https:\/\/pancakeswap.finance)/g)
+  const warningText = t("please make sure you're visiting https://lottery.finance - check the URL carefully.")
+  const warningTextAsParts = warningText.split(/(https:\/\/lottery.finance)/g)
   const warningTextComponent = (
     <>
       <Text as="span" color="warning" small bold textTransform="uppercase">
@@ -56,8 +56,8 @@ const PhishingWarningBanner: React.FC = () => {
           key={i}
           small
           as="span"
-          bold={text === 'https://pancakeswap.finance'}
-          color={text === 'https://pancakeswap.finance' ? '#FFFFFF' : '#BDC2C4'}
+          bold={text === 'https://lottery.finance'}
+          color={text === 'https://lottery.finance' ? '#FFFFFF' : '#BDC2C4'}
         >
           {text}
         </Text>
@@ -77,9 +77,19 @@ const PhishingWarningBanner: React.FC = () => {
         <>
           <InnerContainer>
             <picture>
-              <source type="image/webp" srcSet="/images/decorations/phishing-warning-bunny.webp" />
-              <source type="image/png" srcSet="/images/decorations/phishing-warning-bunny.png" />
-              <img src="/images/decorations/phishing-warning-bunny.png" alt="phishing-warning" width="92px" />
+              <source
+                type="image/webp"
+                srcSet="https://static.wixstatic.com/media/c524024639d04e6bac9378d27e236178.png/v1/fill/w_324,h_454,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/cerdo%20cubo%20con%20cubos%20de%20color%20amarillo.png"
+              />
+              <source
+                type="image/png"
+                srcSet="https://static.wixstatic.com/media/c524024639d04e6bac9378d27e236178.png/v1/fill/w_324,h_454,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/cerdo%20cubo%20con%20cubos%20de%20color%20amarillo.png"
+              />
+              <img
+                src="https://static.wixstatic.com/media/c524024639d04e6bac9378d27e236178.png/v1/fill/w_324,h_454,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/cerdo%20cubo%20con%20cubos%20de%20color%20amarillo.png"
+                alt="phishing-warning"
+                width="52px"
+              />
             </picture>
             <SpeechBubble>{warningTextComponent}</SpeechBubble>
           </InnerContainer>

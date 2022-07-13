@@ -117,7 +117,7 @@ export const useTicketsReducer = (
 
   const getTicketsForPurchase = () => {
     return state.tickets.map((ticket) => {
-      const reversedTicket = [...ticket.numbers].map((num) => parseInt(num, 10)).reverse()
+      const reversedTicket = [...ticket.numbers].map((num) => parseInt(num, 10)) // .reverse()
       reversedTicket.unshift(1)
       const ticketAsNumber = parseInt(reversedTicket.join(''), 10)
       return ticketAsNumber

@@ -21,6 +21,7 @@ const StyledTimerText = styled(Heading)`
   background: ${({ theme }) => theme.colors.gradients.gold};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  position: relative;
 `
 
 const Wrapper: React.FC<TimerProps> = ({ minutes, hours, days, seconds, wrapperClassName }) => {

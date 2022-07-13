@@ -225,12 +225,12 @@ const HowToPlay: React.FC = () => {
     {
       label: t('Step %number%', { number: 1 }),
       title: t('Buy Tickets'),
-      subtitle: t('Prices are set when the round starts, equal to 5 USD in CAKE per ticket.'),
+      subtitle: t('Prices are set when the round starts, equal to 5 BUSD per ticket.'),
     },
     {
       label: t('Step %number%', { number: 2 }),
       title: t('Wait for the Draw'),
-      subtitle: t('There is one draw every day alternating between 0 AM UTC and 12 PM UTC.'),
+      subtitle: t('There is one draw live at time.'),
     },
     {
       label: t('Step %number%', { number: 3 }),
@@ -245,9 +245,7 @@ const HowToPlay: React.FC = () => {
           {t('How to Play')}
         </Heading>
         <Text textAlign="center">
-          {t(
-            'If the digits on your tickets match the winning numbers in the correct order, you win a portion of the prize pool.',
-          )}
+          {t('If the digits on your tickets match the winning numbers in the correct order, you win a prize.')}
         </Text>
         <Text>{t('Simple!')}</Text>
       </Flex>
@@ -266,32 +264,32 @@ const HowToPlay: React.FC = () => {
             {t('The digits on your ticket must match in the correct order to win.')}
           </Heading>
           <Text mb="16px" color="textSubtle">
-            {t('Here’s an example lottery draw, with two tickets, A and B.')}
+            {t('.......')}
           </Text>
           <BulletList>
             <li>
               <Text display="inline" color="textSubtle">
-                {t(
-                  'Ticket A: The first 3 digits and the last 2 digits match, but the 4th digit is wrong, so this ticket only wins a “Match first 3” prize.',
-                )}
+                {t('.......')}
               </Text>
             </li>
             <li>
               <Text display="inline" color="textSubtle">
-                {t(
-                  'Ticket B: Even though the last 5 digits match, the first digit is wrong, so this ticket doesn’t win a prize.',
-                )}
+                {t('.........')}
               </Text>
             </li>
           </BulletList>
           <Text mt="16px" color="textSubtle">
-            {t(
-              'Prize brackets don’t ‘stack’: if you match the first 3 digits in order, you’ll only win prizes from the ‘Match 3’ bracket, and not from ‘Match 1’ and ‘Match 2’.',
-            )}
+            {t('.........')}
           </Text>
         </Flex>
         <Flex flex="1" justifyContent="center">
-          <MatchExampleCard />
+          {/*  <MatchExampleCard />  */}
+          <img
+            src="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axdbiqmjmklf/b/bucket-20211203-1943/o/images%2Ftrophy.webp"
+            height="50%"
+            width="50%"
+            alt=""
+          />
         </Flex>
       </GappedFlex>
       <Divider />
@@ -300,17 +298,33 @@ const HowToPlay: React.FC = () => {
           <Heading mb="24px" scale="lg" color="secondary">
             {t('Prize Funds')}
           </Heading>
-          <Text color="textSubtle">{t('The prizes for each lottery round come from three sources:')}</Text>
+          <Text color="textSubtle">{t('The prizes for each lottery round come from:')}</Text>
           <Heading my="16px" scale="md">
             {t('Ticket Purchases')}
           </Heading>
           <BulletList>
             <li>
               <Text display="inline" color="textSubtle">
-                {t('100% of the CAKE paid by people buying tickets that round goes back into the prize pools.')}
+                {t('85% of the BUSD paid by people buying tickets that round goes back into the prize pools.')}
+              </Text>
+            </li>
+            <li>
+              <Text display="inline" color="textSubtle">
+                {t('5% of the BUSD paid by people buying tickets that round goes to the marketing team.')}
+              </Text>
+            </li>
+            <li>
+              <Text display="inline" color="textSubtle">
+                {t('5% of the BUSD paid by people buying tickets that round goes to the backend operators team.')}
+              </Text>
+            </li>
+            <li>
+              <Text display="inline" color="textSubtle">
+                {t('5% of the BUSD paid by people buying tickets that round goes to the treasury.')}
               </Text>
             </li>
           </BulletList>
+          {/*
           <Heading my="16px" scale="md">
             {t('Rollover Prizes')}
           </Heading>
@@ -338,9 +352,16 @@ const HowToPlay: React.FC = () => {
               </Text>
             </li>
           </BulletList>
+          */}
         </Flex>
         <Flex flex="1" justifyContent="center">
-          <PoolAllocations />
+          {/*  <PoolAllocations /> */}
+          <img
+            src="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axdbiqmjmklf/b/bucket-20211203-1943/o/images%2Fannounce.webp"
+            height="50%"
+            width="50%"
+            alt=""
+          />
         </Flex>
       </GappedFlex>
       <Divider />
@@ -352,9 +373,7 @@ const HowToPlay: React.FC = () => {
           </Heading>
           <Text>
             {t('Check our in-depth guide on')}{' '}
-            <InlineLink href="https://docs.pancakeswap.finance/products/lottery/lottery-guide">
-              {t('how to play the PancakeSwap lottery!')}
-            </InlineLink>
+            <InlineLink href="http://152.70.132.134:3000/lottery">{t('how to play the M&N lottery!')}</InlineLink>
           </Text>
         </Flex>
       </Flex>

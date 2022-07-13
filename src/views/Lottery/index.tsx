@@ -6,6 +6,13 @@ import PageSection from 'components/PageSection'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import { useFetchLottery, useLottery } from 'state/lottery/hooks'
+import {
+  TITLE_BG,
+  GET_TICKETS_BG,
+  FINISHED_ROUNDS_BG,
+  FINISHED_ROUNDS_BG_DARK,
+  CHECK_PRIZES_BG,
+} from './pageSectionStyles'
 import useGetNextLotteryEvent from './hooks/useGetNextLotteryEvent'
 import useStatusTransitions from './hooks/useStatusTransitions'
 import Hero from './components/Hero'
@@ -22,6 +29,14 @@ import { PageMeta } from '../../components/Layout/Page'
 const LotteryPage = styled.div`
   min-height: calc(100vh - 64px);
 `
+const Decorations = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(https://images.pexels.com/photos/10458835/pexels-photo-10458835.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
+  background-repeat: no-repeat;
+  background-position: center 0;
+`
 
 const Lottery = () => {
   useFetchLottery()
@@ -31,6 +46,7 @@ const Lottery = () => {
   const {
     currentRound: { status, endTime },
   } = useLottery()
+  console.log()
   const [historyTabMenuIndex, setHistoryTabMenuIndex] = useState(0)
   const endTimeAsInt = parseInt(endTime, 10)
   const { nextEventTime, postCountdownText, preCountdownText } = useGetNextLotteryEvent(endTimeAsInt, status)
@@ -46,11 +62,12 @@ const Lottery = () => {
         <PageSection
           containerProps={{ style: { marginTop: '-30px' } }}
           concaveDivider
-          clipFill={{ light: '#7645D9' }}
+          clipFill={{ light: '#A700FA' }}
           dividerPosition="top"
           index={2}
         >
           <Flex alignItems="center" justifyContent="center" flexDirection="column" pt="24px">
+            {/*  <Decorations /> */}
             {status === LotteryStatus.OPEN && (
               <Heading scale="xl" mb="24px" textAlign="center">
                 {t('Get your tickets now!')}

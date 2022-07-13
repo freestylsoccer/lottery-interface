@@ -22,7 +22,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import FinishedRoundTable from './FinishedRoundTable'
 import { WhiteBunny } from '../../svgs'
 import BuyTicketsButton from '../BuyTicketsButton'
-import PreviousRoundCardBody from '../PreviousRoundCard/Body'
+import ExpandedGridItem from '../PreviousRoundCard/ExpandedGridItem'
 import { processLotteryResponse, getDrawnDate } from '../../helpers'
 import PreviousRoundCardFooter from '../PreviousRoundCard/Footer'
 
@@ -105,7 +105,7 @@ const YourHistoryCard: React.FC<YourHistoryCardProps> = ({ handleShowMoreClick, 
   const getBody = () => {
     if (shouldShowRoundDetail) {
       return (
-        <PreviousRoundCardBody
+        <ExpandedGridItem
           lotteryNodeData={selectedLotteryNodeData}
           lotteryId={selectedLotteryId}
           winningTickets={undefined}

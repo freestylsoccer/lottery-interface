@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { Card, Text, Skeleton, CardHeader, Box, Button, useModal, Flex, CardBody } from '@pancakeswap/uikit'
+import { Card, Text, Skeleton, CardHeader, Box, Button, useModal, Flex, CardBody, Heading } from '@pancakeswap/uikit'
+import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'contexts/Localization'
 import { useAppDispatch } from 'state'
 import { useLottery } from 'state/lottery/hooks'
@@ -12,6 +13,7 @@ import PreviousRoundCardBody from '../PreviousRoundCard/Body'
 import PreviousRoundCardFooter from '../PreviousRoundCard/Footer'
 import WithdrawModal from '../WithdrawFunds'
 import ClaimRewardsModal from '../ClaimRewards'
+import ExpandedGridItem from '../PreviousRoundCard/ExpandedGridItem'
 
 const StyledCard = styled(Card)`
   width: 100%;
@@ -32,14 +34,19 @@ const StyledReferralRewards = styled(CardBody)`
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  padding-top: 0px;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    justify-content: flex-start;
+  }
 `
 const Grid = styled.div`
   display: grid;
   grid-template-columns: auto;
 
   ${({ theme }) => theme.mediaQueries.md} {
-    grid-column-gap: 72px;
+    grid-column-gap: 20px;
     grid-row-gap: 36px;
     grid-template-columns: auto 1fr;
   }
@@ -51,6 +58,7 @@ const AllHistoryCard = () => {
     currentLanguage: { locale },
   } = useTranslation()
   const dispatch = useAppDispatch()
+  const { account } = useWeb3React()
   const {
     currentLotteryId,
     lotteriesData,
@@ -159,18 +167,20 @@ const AllHistoryCard = () => {
               {t('You can withdraw the funds equivalent to the number of tickets purchased for this round.')}
             </Text>
           </Box>
-          <Flex alignItems="center" justifyContent="center">
-            <Button
-              onClick={onPresentWithdrawFundsModal}
-              height="auto"
-              width="fit-content"
-              p="0"
-              variant="text"
-              scale="sm"
-            >
-              {t('Withdraw funds')}
-            </Button>
-          </Flex>
+          {account && (
+            <Flex alignItems="center" justifyContent="center">
+              <Button
+                onClick={onPresentWithdrawFundsModal}
+                height="auto"
+                width="fit-content"
+                p="0"
+                variant="text"
+                scale="sm"
+              >
+                {t('Withdraw funds')}
+              </Button>
+            </Flex>
+          )}
         </>
       )}
 
@@ -179,16 +189,24 @@ const AllHistoryCard = () => {
         lotteryId={selectedRoundId}
         winningTickets={winningTickets}
       />
-      {selectedLotteryStatus === LotteryStatus.CLAIMABLE && (
+      <ExpandedGridItem
+        lotteryNodeData={selectedLotteryNodeData}
+        lotteryId={selectedRoundId}
+        winningTickets={winningTickets}
+      />
+      {selectedLotteryStatus === LotteryStatus.CLAIMABLE && account && (
         <StyledReferralRewards>
           <Grid>
+            <Box display={['none', null, null, 'flex']}>
+              <Heading>{t('Your Rewards')}</Heading>
+            </Box>
             <Flex
               flexDirection="column"
               mr={[null, null, null, '24px']}
-              alignItems={['center', null, null, 'flex-start']}
+              alignItems={['center', null, 'flex-start', 'flex-start']}
               mb="4px"
             >
-              <Box mt={['32px', null, null, 0]}>
+              <Box mt={['4px', null, null, 0]}>
                 <Text display="inline">{t('The referral rewards text')}</Text>
               </Box>
               <Button

@@ -29,7 +29,7 @@ const WithdrawInnerContainer: React.FC<WithdrawInnerProps> = ({ onSuccess, round
   const [unrealizedRoundData, sethHasAmountToWithdraw] = useState<HasAmountToWitdraw>(null)
   const [isFetched, setIsFetched] = useState(false)
   const lotteryContract = useLotteryV2Contract()
-
+  console.log(isFetched)
   const cakeReward = new BigNumber(unrealizedRoundData?.amount)
 
   const dollarReward = cakeReward
@@ -42,9 +42,9 @@ const WithdrawInnerContainer: React.FC<WithdrawInnerProps> = ({ onSuccess, round
 
       sethHasAmountToWithdraw(response)
       if (response) {
-        setIsFetched(false)
-      } else {
         setIsFetched(true)
+      } else {
+        setIsFetched(false)
       }
     }
 

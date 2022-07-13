@@ -77,6 +77,7 @@ const PrizeTotalBalance = styled(Balance)`
   background: ${({ theme }) => theme.colors.gradients.gold};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  position: relative;
 `
 
 const StyledBuyTicketButton = styled(BuyTicketsButton)<{ disabled: boolean }>`
@@ -107,7 +108,7 @@ const Decorations = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  background: url(/images/decorations/bg-star.svg);
+  background: url(https://images.unsplash.com/photo-1626544827763-d516dce335e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1934&q=80);
   background-repeat: no-repeat;
   background-position: center 0;
 `
@@ -242,13 +243,38 @@ const Hero = () => {
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center">
-      <Decorations />
+      {/*  <Decorations /> */}
       <StarsDecorations display={['none', 'none', 'block']}>
-        <img src="/images/lottery/star-big.png" width="124px" height="109px" alt="" />
-        <img src="/images/lottery/star-small.png" width="70px" height="62px" alt="" />
-        <img src="/images/lottery/three-stars.png" width="130px" height="144px" alt="" />
-        <img src="/images/lottery/ticket-l.png" width="123px" height="83px" alt="" />
-        <img src="/images/lottery/ticket-r.png" width="121px" height="72px" alt="" />
+        <img
+          src="https://static.wixstatic.com/media/9ef9dbe7966542c99cb350a58b4ef704.png/v1/fill/w_280,h_280,al_c,lg_1,q_85,enc_auto/Cubo-trofeo.png"
+          width="124px"
+          height="109px"
+          alt=""
+        />
+        <img
+          src="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axdbiqmjmklf/b/bucket-20211203-1943/o/images%2Ffire.webp"
+          width="70px"
+          height="62px"
+          alt=""
+        />
+        <img
+          src="https://static.wixstatic.com/media/c524024639d04e6bac9378d27e236178.png/v1/fill/w_324,h_454,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/cerdo%20cubo%20con%20cubos%20de%20color%20amarillo.png"
+          width="130px"
+          height="144px"
+          alt=""
+        />
+        <img
+          src="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axdbiqmjmklf/b/bucket-20211203-1943/o/images%2Fbtc.webp"
+          width="123px"
+          height="83px"
+          alt=""
+        />
+        <img
+          src="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axdbiqmjmklf/b/bucket-20211203-1943/o/images%2F777.png"
+          width="121px"
+          height="72px"
+          alt=""
+        />
       </StarsDecorations>
       <Heading mb="8px" scale="md" id="lottery-hero-title">
         {t('The EME & ENE Lottery')}

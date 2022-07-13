@@ -45,7 +45,12 @@ export default function useCatchTxError(): CatchTxErrorReturn {
           </ToastDescriptionWithTx>,
         )
       } else {
-        toastError(t('Error'), t('Please try again. Confirm the transaction and make sure you are paying enough gas!'))
+        toastError(
+          t('Error'),
+          error?.data?.message === 'execution reverted: Ticket already sold, choose another number and try it again.'
+            ? t('Ticket number already sold, choose another number and try it again.')
+            : t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
+        )
       }
     },
     [t, toastError],

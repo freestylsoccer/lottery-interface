@@ -71,6 +71,8 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
       priceTicketInBusd,
       // discountDivisor,
       userTickets: { tickets: userCurrentTickets },
+      maxTicketsToSell,
+      ticketsSold,
     },
   } = useLottery()
   const { callWithGasPrice } = useCallWithGasPrice()
@@ -277,12 +279,17 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     })
 
   const getErrorMessage = () => {
-    if (userNotEnoughCake) return t('Insufficient CAKE balance')
+    if (userNotEnoughCake) return t('Insufficient BUSD balance')
     return t('The maximum number of tickets you can buy in one transaction is %maxTickets%', {
       maxTickets: maxNumberTicketsPerBuyOrClaim.toString(),
     })
   }
-
+  const getMaxTicketsError =
+    parseInt(maxTicketsToSell) - parseInt(ticketsSold) >= parseInt(ticketsToBuy)
+      ? ''
+      : t('The available number of tickets to sell this lottery is %maxTickets%', {
+          maxTickets: parseInt(maxTicketsToSell) - parseInt(ticketsSold),
+        })
   /*
   const percentageDiscount = () => {
     const percentageAsBn = new BigNumber(discountValue).div(new BigNumber(ticketCostBeforeDiscount)).times(100)
@@ -299,7 +306,8 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     userNotEnoughCake ||
     !ticketsToBuy ||
     new BigNumber(ticketsToBuy).lte(0) ||
-    getTicketsForPurchase().length !== parseInt(ticketsToBuy, 10)
+    getTicketsForPurchase().length !== parseInt(ticketsToBuy, 10) ||
+    getMaxTicketsError !== ''
 
   if (buyingStage === BuyingStage.EDIT) {
     return (
@@ -335,7 +343,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         onUserInput={handleInputChange}
         currencyValue={
           cakePriceBusd.gt(0) &&
-          `~${ticketsToBuy ? getFullDisplayBalance(priceTicketInBusd.times(new BigNumber(ticketsToBuy))) : '0.00'} CAKE`
+          `~${ticketsToBuy ? getFullDisplayBalance(priceTicketInBusd.times(new BigNumber(ticketsToBuy))) : '0.00'} BUSD`
         }
       />
       <Flex alignItems="center" justifyContent="flex-end" mt="4px" mb="12px">
@@ -343,6 +351,11 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
           {account && (userNotEnoughCake || maxTicketPurchaseExceeded) && (
             <Text fontSize="12px" color="failure">
               {getErrorMessage()}
+            </Text>
+          )}
+          {account && parseInt(ticketsToBuy) > 0 && (
+            <Text fontSize="12px" color="failure">
+              {getMaxTicketsError}
             </Text>
           )}
           {account && (

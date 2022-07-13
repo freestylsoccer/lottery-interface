@@ -2,12 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import {
   CardBody,
-  Heading,
   Flex,
-  Skeleton,
   Text,
-  Box,
-  Button,
   useModal,
   CardRibbon,
   useMatchBreakpoints,
@@ -28,13 +24,39 @@ const StyledCardBody = styled(CardBody)`
   justify-content: center;
 `
 const Grid = styled.div`
+  padding-top: 6px;
+  position: relative;
   display: grid;
-  grid-template-columns: auto;
+  grid-gap: 4px;
+  /* Between 0 - 370px the team image is absolutely positioned so it starts as a 3-column grid */
+  grid-template-columns: 50px 1fr;
+
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding-top: 20px;
+    grid-template-columns: 50px 1fr;
+    grid-gap: 8px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding-top: 2px;
+    grid-template-columns: 80px 1fr;
+  }
 
   ${({ theme }) => theme.mediaQueries.md} {
-    grid-column-gap: 72px;
-    grid-row-gap: 36px;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 100px 1fr;
+    grid-gap: 16px;
+  }
+
+  /* Between 968 - 1080px the team image is absolute positioned so it returns to a 3-column grid */
+  ${({ theme }) => theme.mediaQueries.lg} {
+    grid-template-columns: 120px 1fr;
+    grid-gap: 16px;
+    min-height: 72px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.xl} {
+    grid-template-columns: 120px 1fr;
+    grid-gap: 16px;
   }
 `
 
@@ -68,84 +90,42 @@ const PreviousRoundCardBody: React.FC<{
     status === LotteryStatus.CLAIMABLE ? currentLotteryIdAsInt : currentLotteryIdAsInt - 1
   const isLatestRound = mostRecentFinishedRoundId.toString() === lotteryId
 
-  const [onPresentViewTicketsModal] = useModal(
-    <ViewTicketsModal roundId={lotteryId} roundStatus={lotteryNodeData?.status} />,
-  )
-
-  const totalTicketNumber = userDataForRound ? userDataForRound.totalTickets : 0
-  const ticketRoundText =
-    totalTicketNumber > 1
-      ? t('You had %amount% tickets this round', { amount: totalTicketNumber })
-      : t('You had %amount% ticket this round', { amount: totalTicketNumber })
-  const [youHadText, ticketsThisRoundText] = ticketRoundText.split(totalTicketNumber.toString())
+  const topTen = winningTickets && winningTickets?.ticketNumber.slice(0, 10)
 
   return (
     <StyledCardBody>
       {isLatestRound && <StyledCardRibbon text={t('Latest')} />}
       <Grid>
-        {winningTickets?.ticketNumber?.map((num, i) => (
+        {topTen?.map((num, i) => (
           <React.Fragment key={num}>
-            <Flex justifyContent={['center', null, null, 'flex-start']}>
-              <Heading mb="24px">{t(`#${i + 1} Winning Number`)}</Heading>
+            <Flex
+              maxWidth={['20px', null, null, '100%']}
+              ml={['4px', '8px', '16px']}
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <Text color="secondary" fontSize={isLargerScreen ? '42px' : '16px'} bold>
+                #{i + 1}
+              </Text>
             </Flex>
-            <Flex maxWidth={['240px', null, null, '100%']} justifyContent={['center', null, null, 'flex-start']}>
+            <Flex maxWidth={['340px', null, null, '100%']} justifyContent={['center', null, null, 'flex-start']}>
               {lotteryId ? (
-                lotteryNodeData?.finalNumber ? (
-                  <WinningNumbers
-                    rotateText={isLargerScreen || false}
-                    number={num}
-                    mr={[null, null, null, '32px']}
-                    size="100%"
-                    fontSize={isLargerScreen ? '42px' : '16px'}
-                  />
-                ) : (
-                  <Skeleton
-                    width={['240px', null, null, '450px']}
-                    height={['34px', null, null, '71px']}
-                    mr={[null, null, null, '32px']}
-                  />
-                )
+                <WinningNumbers
+                  rotateText={isLargerScreen || false}
+                  number={num}
+                  mr={[null, null, null, '32px']}
+                  size="100%"
+                  fontSize={isLargerScreen ? '42px' : '16px'}
+                />
               ) : (
-                <>
-                  <Flex flexDirection="column" alignItems="center" width={['240px', null, null, '480px']}>
-                    <Text mb="8px">{t('Please specify Round')}</Text>
-                    <BunnyPlaceholderIcon height="64px" width="64px" />
-                  </Flex>
-                </>
+                <Flex flexDirection="column" alignItems="center" width={['240px', null, null, '480px']}>
+                  <Text mb="8px">{t('Please specify Round')}</Text>
+                  <BunnyPlaceholderIcon height="64px" width="64px" />
+                </Flex>
               )}
             </Flex>
           </React.Fragment>
         ))}
-        {userDataForRound && (
-          <>
-            <Box display={['none', null, null, 'flex']}>
-              <Heading>{t('Your tickets')}</Heading>
-            </Box>
-            <Flex
-              flexDirection="column"
-              mr={[null, null, null, '24px']}
-              alignItems={['center', null, null, 'flex-start']}
-            >
-              <Box mt={['32px', null, null, 0]}>
-                <Text display="inline">{youHadText} </Text>
-                <Text display="inline" bold>
-                  {userDataForRound.totalTickets}
-                </Text>
-                <Text display="inline">{ticketsThisRoundText}</Text>
-              </Box>
-              <Button
-                onClick={onPresentViewTicketsModal}
-                height="auto"
-                width="fit-content"
-                p="0"
-                variant="text"
-                scale="sm"
-              >
-                {t('View your tickets')}
-              </Button>
-            </Flex>
-          </>
-        )}
       </Grid>
     </StyledCardBody>
   )

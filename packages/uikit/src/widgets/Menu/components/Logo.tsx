@@ -48,8 +48,12 @@ const Logo: React.FC<Props> = ({ isDark, href }) => {
   const isAbsoluteUrl = href.startsWith("http");
   const innerLogo = (
     <>
-      <LogoIcon className="mobile-icon" />
-      <LogoWithTextIcon className="desktop-icon" isDark={isDark} />
+      <img
+        src="https://static.wixstatic.com/media/9ef9dbe7966542c99cb350a58b4ef704.png/v1/fill/w_280,h_280,al_c,lg_1,q_85,enc_auto/Cubo-trofeo.png"
+        width="52px"
+        height="52px"
+        alt="logo"
+      />
     </>
   );
 
